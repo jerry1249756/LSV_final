@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir lib
+mkdir include
 # go to engine/
 cd engine/
 
