@@ -1,6 +1,7 @@
 *.o
 *.blif
 *.cnf
+*.v
 abc.history
 /approximate
 /lib

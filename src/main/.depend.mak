@@ -23,4 +23,6 @@ main.o: main.cpp ../../include/gvAbcMgr.h ../../include/base/abc/abc.h \
  ../../include/sat/bsat/satClause.h ../../include/misc/util/utilDouble.h \
  ../../include/aig/ioa/ioa.h ../../include/gvAbcNtk.h \
  ../../include/bdd/cudd/cudd.h ../../include/bdd/mtr/mtr.h \
- ../../include/bdd/epd/epd.h ../../include/gvAbcNtk.h
+ ../../include/bdd/epd/epd.h ../../include/gvAbcNtk.h \
+ ../../include/sat/cnf/cnf.h ../../include/opt/dar/darInt.h \
+ ../../include/opt/dar/dar.h
