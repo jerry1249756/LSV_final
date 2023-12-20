@@ -1,11 +1,20 @@
-*.o
+# input design files
 *.blif
 *.cnf
 *.v
+
+# output files
+*.o
+*.out
+
 abc.history
 /approximate
-/lib
+
 /engine/abc
+/engine/KCBox
+
 /include
+/build
+/lib
 
 .vscode
