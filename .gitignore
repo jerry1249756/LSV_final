@@ -8,12 +8,14 @@
 *.out
 *.ps
 *.dot
+*.aig
 
 abc.history
-/bin/*
+/bin/approximate
 
 /engine/abc
 /engine/KCBox
+/testcases
 
 /include
 /build

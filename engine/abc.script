@@ -28,5 +28,5 @@ find ./ -name "*.d" | xargs rm
 find ./ -name "*.make" | xargs rm
 
 # go to src/eng and create symbol link
-echo "Creating softlink from engine/abc/gv_src to src/eng/abcc ...";
+echo "Creating softlink from engine/abc/our_src to src/eng/abcc ...";
 cd ../../../src/eng; ln -fs ../../engine/abc/our_src ./abcc

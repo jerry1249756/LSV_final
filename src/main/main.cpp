@@ -1,12 +1,12 @@
 #include <iostream>
 #include "gvAbcMgr.h"
 #include "base/abc/abc.h"
-#include "bdd/cudd/cudd.h"
 #include "gvAbcNtk.h"
 
 #include "./../est/exec.h"
+#include "./../SA/change_node.cpp"
+#include "sat/cnf/cnf.h"
 
-#include "sat/cnf/cnf.h" 
 extern "C"{ 
   Aig_Man_t* Abc_NtkToDar( Abc_Ntk_t * pNtk, int fExors, int fRegisters );
 }
@@ -16,12 +16,14 @@ extern AbcMgr* abcMgr;
 void abccmd(string);
 
 
+
 int main(int argc, char** argv) {
     abcMgr = new AbcMgr;
     string a = "./testcases/square.blif";
     abcMgr->abcReadDesign(a);
 
     Abc_Ntk_t* pNtk = abcMgr->get_Abc_Frame_t()->pNtkCur;
+    Abc_Obj_t* miter_node = SelectChoiceNode(pNtk);
 
     // abccmd("show");
     abccmd("strash");
