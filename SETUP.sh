@@ -7,7 +7,7 @@ mkdir build
 cd engine/
 
 # install "abc"
-# ./abc.script
+./abc.script
 ./KCBox.script
 
 # back to lsv_final/

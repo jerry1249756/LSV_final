@@ -1,9 +1,9 @@
-SRCPKGS  = util abc  
-LIBPKGS  = util abc
+SRCPKGS  = util abc est
+LIBPKGS  = util abc est
 
 MAIN     = main
 
-EXTLIBS	 = -lm -lz -lreadline -ltermcap -ldl -lstdc++ -ltcl -lffi -lgmp
+EXTLIBS	 = -lm -lz -lreadline -ltermcap -ldl -lstdc++ -lffi -lgmp
 SRCLIBS  = $(addprefix -l, $(LIBPKGS)) $(addprefix -l, $(ENGPKGS))
 
 
