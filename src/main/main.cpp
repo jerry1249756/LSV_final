@@ -5,6 +5,8 @@
 
 #include "./../est/exec.h"
 #include "./../SA/change_node.cpp"
+#include "./../sim/simulate.h"
+
 #include "sat/cnf/cnf.h"
 
 extern "C"{ 
@@ -33,6 +35,7 @@ int main(int argc, char** argv) {
 
     // // calling abc's command
     // // abccmd("write_cnf temp.cnf");
+    Simulation(pNtk, pNtk);
     test_function(pNtk, "n1220");
 
     return 0;

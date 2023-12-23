@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <stdlib.h>  
 #include <limits.h>
+#include <cmath>
 
 #define my_srandom  srandom
 #define my_random   random
@@ -23,7 +24,7 @@ class RandomNumGen
       RandomNumGen() { my_srandom(getpid()); }
       RandomNumGen(unsigned seed) { my_srandom(seed); }
       const int operator() (const int range) const {
-         return int(range * (double(my_random()) / INT_MAX));
+         return int(range * (double(my_random()) / INT_MAX) * pow(-1, my_random()));
       }
 };
 
