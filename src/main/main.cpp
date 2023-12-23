@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 
     // Aig_Man_t *pAig = Abc_NtkToDar(cone_k, 0, 1);//aig manager
     // Cnf_Dat_t *pCnf = Cnf_Derive(pAig, 1);
-    Simulation(cone_k, pConeDup);
+    Simulation(cone_k, pConeDup, "nmed");
     // Abc_FrameReplaceCurrentNetwork(abcMgr->get_Abc_Frame_t(), pConeDup);
     // abccmd("show");
     // cout << Abc_ObjIsComplement(Abc_ObjFanin0(pNode));

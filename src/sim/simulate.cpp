@@ -61,7 +61,7 @@ int CountOne(int in) {
   return one;
 }
 
-void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk) {
+void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
   // check if two Network have same # input, output
   assert(pOrgNtk->vPis->nSize == pAftNtk->vPis->nSize);
   assert(pOrgNtk->vPos->nSize == pAftNtk->vPos->nSize);
@@ -88,21 +88,41 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk) {
       }
     }
 
-    for (int j = 0; j < Po_Num; ++j) {
-      Xor = Org_res[j] ^ Aft_res[j];
-      err = err | Xor;
-      if (i < 3) {
-        cout << "org[" << j << "]:";
-        PrintBinary(Org_res[j]);
-        cout << "aft[" << j << "]:";
-        PrintBinary(Aft_res[j]);
-        cout << "xor[" << j << "]:";
-        PrintBinary(Xor);
+    if (err_type == "er" || err_type == "ER") {
+      for (int j = 0; j < Po_Num; ++j) {
+        Xor = Org_res[j] ^ Aft_res[j];
+        err = err | Xor;
+        if (i < 3) {
+          cout << "org[" << j << "]:";
+          PrintBinary(Org_res[j]);
+          cout << "aft[" << j << "]:";
+          PrintBinary(Aft_res[j]);
+          cout << "xor[" << j << "]:";
+          PrintBinary(Xor);
+        }
+      }
+      total_Ptn += 32;
+      total_Err += CountOne(err);
+    }
+    else if (err_type == "nmed" || err_type == "NMED") {
+      for (int j = 0; j < Po_Num; ++j) {
+        Xor = Org_res[j] ^ Aft_res[j];
+        total_Ptn += 32;
+        total_Err += CountOne(Xor);
+        if (i < 3) {
+          cout << "org[" << j << "]:";
+          PrintBinary(Org_res[j]);
+          cout << "aft[" << j << "]:";
+          PrintBinary(Aft_res[j]);
+          cout << "xor[" << j << "]:";
+          PrintBinary(Xor);
+        }
       }
     }
+    else {
+      cout << "wrong error type!" << endl;
+    }
 
-    total_Ptn += 32;
-    total_Err += CountOne(err);
 
     // cout << "iteration[" << i << "]" << "\r";
     // cout << "pattern count : " << total_Ptn << "\r";
