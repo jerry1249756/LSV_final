@@ -54,6 +54,14 @@ int* SimPattern(Abc_Ntk_t* pNtk, int* ptn) {
   return out_res;
 }
 
+int CountOne(int in) {
+  int one = 0;
+  for (int i = 0; i < 32; ++i) {
+    if (in & (0x01<<i)) one++;
+  }
+  return one;
+}
+
 void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk) {
   // check if two Network have same # input, output
   assert(pOrgNtk->vPis->nSize == pAftNtk->vPis->nSize);
@@ -61,7 +69,7 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk) {
   
   int Pi_Num = pOrgNtk->vPis->nSize;
   int Po_Num = pOrgNtk->vPos->nSize;
-  int Sim_Num = 2;
+  int Sim_Num = 100;
   int total_Ptn = 0;
   int total_Err = 0;
   unsigned seed = 20231222;
@@ -71,31 +79,36 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk) {
     int* ptn = GenPattern(myGen, Pi_Num);
     int* Org_res = SimPattern(pOrgNtk, ptn);
     int* Aft_res = SimPattern(pAftNtk, ptn);
-    int* Xor_res = new int [Po_Num];
-    for (int j = 0; j < Pi_Num; ++j) {
-      cout << j << ' ';
-      PrintBinary(ptn[j]);
+    int Xor = 0;
+    int err = 0;
+
+    if (i < 3) {
+      for (int j = 0; j < Pi_Num; ++j) {
+        cout << j << ' ';
+        PrintBinary(ptn[j]);
+      }
     }
+
     for (int j = 0; j < Po_Num; ++j) {
-      cout << "org[" << j << "]:";
-      PrintBinary(Org_res[j]);
-      cout << "aft[" << j << "]:";
-      PrintBinary(Aft_res[j]);
-      Xor_res[j] = Org_res[j] ^ Aft_res[j];
-      cout << "xor[" << j << "]:";
-      PrintBinary(Xor_res[j]);
+      Xor = Org_res[j] ^ Aft_res[j];
+      err = err | Xor;
+      if (i < 3) {
+        cout << "org[" << j << "]:";
+        PrintBinary(Org_res[j]);
+        cout << "aft[" << j << "]:";
+        PrintBinary(Aft_res[j]);
+        cout << "xor[" << j << "]:";
+        PrintBinary(Xor);
+      }
     }
 
     total_Ptn += 32;
-    int err = 0;
-    for (int j = 0; j < Po_Num; ++j) {
-      err = err | Xor_res[j];
-    }
-    for (int j = 0; j < 32; ++j) {
-      if (err & (0x01<<j)) total_Err++;
-    }
-    cout << "total pattern : " << total_Ptn << endl;
-    cout << "total error   : " << total_Err << endl;
+    total_Err += CountOne(err);
+
+    cout << "iteration[" << i << "]" << endl;
+    cout << "pattern count : " << total_Ptn << endl;
+    cout << "error   count : " << total_Err << endl;
+    cout << "error   rate  : " << ((double)total_Err) / ((double)total_Ptn) << endl;
     delete ptn;
     delete Org_res;
     delete Aft_res;

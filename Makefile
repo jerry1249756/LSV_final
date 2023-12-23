@@ -1,5 +1,5 @@
-SRCPKGS  = util abc est
-LIBPKGS  = util abc est
+SRCPKGS  = util abc est sim
+LIBPKGS  = util abc est sim
 
 MAIN     = main
 
