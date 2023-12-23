@@ -8,3 +8,6 @@ extern "C"{
 }
 
 Abc_Obj_t * SelectChoiceNode(Abc_Ntk_t*);
+void UpdateNtk_toggle_input(Abc_Ntk_t*, Abc_Obj_t*, int, int);
+void UpdateNtk_const1_propagate(Abc_Ntk_t*, Abc_Obj_t*, int);
+void UpdateNtk_const0_propagate(Abc_Ntk_t*, Abc_Obj_t*, int);

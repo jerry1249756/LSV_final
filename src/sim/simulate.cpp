@@ -68,7 +68,7 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
   
   int Pi_Num = pOrgNtk->vPis->nSize;
   int Po_Num = pOrgNtk->vPos->nSize;
-  int Sim_Num = 100000;
+  int Sim_Num = 10000;
   int total_Ptn = 0;
   int total_Err = 0;
   unsigned seed = 20231222;
@@ -93,13 +93,15 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
         Xor = Org_res[j] ^ Aft_res[j];
         err = err | Xor;
         if (i < 3) {
-          cout << "org[" << j << "]:";
-          PrintBinary(Org_res[j]);
-          cout << "aft[" << j << "]:";
-          PrintBinary(Aft_res[j]);
+          // cout << "org[" << j << "]:";
+          // PrintBinary(Org_res[j]);
+          // cout << "aft[" << j << "]:";
+          // PrintBinary(Aft_res[j]);
           cout << "xor[" << j << "]:";
           PrintBinary(Xor);
-        }
+          cout << "err[" << j << "]:";
+        PrintBinary(err);
+      }
       }
       total_Ptn += 32;
       total_Err += CountOne(err);
@@ -127,7 +129,7 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
     // cout << "iteration[" << i << "]" << "\r";
     // cout << "pattern count : " << total_Ptn << "\r";
     // cout << "error   count : " << total_Err << "\r";
-    cout << "iter[" << i << "] : error rate : " << ((double)total_Err) / ((double)total_Ptn) << "\r";
+    cout << "iter[" << i << "] : error rate : " << ((double)total_Err) / ((double)total_Ptn) << "   error   count : " << total_Err << "\r";
     delete ptn;
     delete Org_res;
     delete Aft_res;

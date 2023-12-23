@@ -15,3 +15,37 @@ Abc_Obj_t * SelectChoiceNode(Abc_Ntk_t* pNtk) {
   pMiter = Abc_ObjRegular(pMiter);
   return pMiter;
 }
+
+void UpdateNtk_toggle_input(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int l_neg, int r_neg) {
+  Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
+  Abc_Obj_t * pAnd = Abc_AigAnd(abc_aig, Abc_ObjNotCond(Abc_ObjChild0(pNode), l_neg), Abc_ObjNotCond(Abc_ObjChild1(pNode), r_neg));
+  pAnd = Abc_ObjRegular(pAnd);
+  Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+}
+
+void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { // edge = 0: left, edge = 1: right
+  Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
+  Abc_Obj_t* pAnd;
+  if (edge == 0) {
+    pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), Abc_ObjChild1(pNode));
+  }
+  else {
+    pAnd = Abc_AigAnd(abc_aig, Abc_ObjChild0(pNode), Abc_AigConst1(pNtk));
+  }
+  pAnd = Abc_ObjRegular(pAnd);
+  Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+}
+
+void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { // edge = 0: left, edge = 1: right
+  Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
+  Abc_Obj_t* pAnd;
+  if (edge == 0) {
+    pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), Abc_ObjChild1(pNode));
+  }
+  else {
+    pAnd = Abc_AigAnd(abc_aig, Abc_ObjChild0(pNode), Abc_ObjNot(Abc_AigConst1(pNtk)));
+  }
+  pAnd = Abc_ObjRegular(pAnd);
+  Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+}
+
