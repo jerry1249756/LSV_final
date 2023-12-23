@@ -62,7 +62,7 @@ int CountOne(int in) {
   return one;
 }
 
-double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
+double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type, int Sim_Num) {
   // cout << "start simulation\nerror type = " << err_type << endl;
   Vec_Ptr_t* vNodes_org = Abc_NtkDfsIter(pOrgNtk, 0);
   Vec_Ptr_t* vNodes_aft = Abc_NtkDfsIter(pAftNtk, 0);
@@ -72,7 +72,7 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
   
   int Pi_Num = pOrgNtk->vPis->nSize;
   int Po_Num = pOrgNtk->vPos->nSize;
-  int Sim_Num = 100000; // the total number of simulation will be Sim_Num * 32
+  // int Sim_Num = 100000; // the total number of simulation will be Sim_Num * 32
   int total_Ptn = 0;
   int total_Err = 0;
   double Err_rate = 0;
@@ -86,24 +86,10 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
     int Xor = 0;
     int err = 0;
     bool early_stop = true;
-    /*if (i < 3) {
-      for (int j = 0; j < Pi_Num; ++j) {
-        cout << j << ' ';
-        PrintBinary(ptn[j]);
-      }
-    }*/
     if (err_type == "er" || err_type == "ER") {
       for (int j = 0; j < Po_Num; ++j) {
         Xor = Org_res[j] ^ Aft_res[j];
         err = err | Xor;
-        /*if (i < 3) {
-          cout << "org[" << j << "]:";
-          PrintBinary(Org_res[j]);
-          cout << "aft[" << j << "]:";
-          PrintBinary(Aft_res[j]);
-          cout << "xor[" << j << "]:";
-          PrintBinary(Xor);
-        }*/
       }
       total_Ptn += 32;
       total_Err += CountOne(err);
@@ -113,14 +99,6 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
         Xor = Org_res[j] ^ Aft_res[j];
         total_Ptn += 32;
         total_Err += CountOne(Xor);
-        /*if (i < 3) {
-          cout << "org[" << j << "]:";
-          PrintBinary(Org_res[j]);
-          cout << "aft[" << j << "]:";
-          PrintBinary(Aft_res[j]);
-          cout << "xor[" << j << "]:";
-          PrintBinary(Xor);
-        }*/
       }
     }
     else {
@@ -129,13 +107,13 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
     Err_rate = (double)total_Err / (double)total_Ptn;
     cout << "[" << setw(5) << i << "] error rate : " << Err_rate << "\r";
     for (int j = 0; j < Past_iter; ++j) {
-      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.01*Past_Err[Past_iter-1]) {
+      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.00001) {
         early_stop = false;
         break;
       }
     }
     if (early_stop) {
-      // cout << "\nerrly stop!";
+      // cout << "\nearly stop!";
       break;
     }
     else {
