@@ -61,16 +61,20 @@ int CountOne(int in) {
   return one;
 }
 
-void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
+double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
+  cout << "start simulation, error type = " << err_type << endl;
   // check if two Network have same # input, output
   assert(pOrgNtk->vPis->nSize == pAftNtk->vPis->nSize);
   assert(pOrgNtk->vPos->nSize == pAftNtk->vPos->nSize);
   
   int Pi_Num = pOrgNtk->vPis->nSize;
   int Po_Num = pOrgNtk->vPos->nSize;
-  int Sim_Num = 10000;
+  int Sim_Num = 100000; // the total number of simulation will be Sim_Num * 32
   int total_Ptn = 0;
   int total_Err = 0;
+  double Err_rate = 0;
+  int Past_iter = 50; // compare the past "Past_iter" error rate
+  double* Past_Err = new double[Past_iter];
   unsigned seed = 20231222;
   RandomNumGen myGen(seed);
   
@@ -80,28 +84,25 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
     int* Aft_res = SimPattern(pAftNtk, ptn);
     int Xor = 0;
     int err = 0;
-
-    if (i < 3) {
+    bool early_stop = true;
+    /*if (i < 3) {
       for (int j = 0; j < Pi_Num; ++j) {
         cout << j << ' ';
         PrintBinary(ptn[j]);
       }
-    }
-
+    }*/
     if (err_type == "er" || err_type == "ER") {
       for (int j = 0; j < Po_Num; ++j) {
         Xor = Org_res[j] ^ Aft_res[j];
         err = err | Xor;
-        if (i < 3) {
-          // cout << "org[" << j << "]:";
-          // PrintBinary(Org_res[j]);
-          // cout << "aft[" << j << "]:";
-          // PrintBinary(Aft_res[j]);
+        /*if (i < 3) {
+          cout << "org[" << j << "]:";
+          PrintBinary(Org_res[j]);
+          cout << "aft[" << j << "]:";
+          PrintBinary(Aft_res[j]);
           cout << "xor[" << j << "]:";
           PrintBinary(Xor);
-          cout << "err[" << j << "]:";
-        PrintBinary(err);
-      }
+        }*/
       }
       total_Ptn += 32;
       total_Err += CountOne(err);
@@ -111,28 +112,42 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
         Xor = Org_res[j] ^ Aft_res[j];
         total_Ptn += 32;
         total_Err += CountOne(Xor);
-        if (i < 3) {
+        /*if (i < 3) {
           cout << "org[" << j << "]:";
           PrintBinary(Org_res[j]);
           cout << "aft[" << j << "]:";
           PrintBinary(Aft_res[j]);
           cout << "xor[" << j << "]:";
           PrintBinary(Xor);
-        }
+        }*/
       }
     }
     else {
       cout << "wrong error type!" << endl;
     }
-
-
-    // cout << "iteration[" << i << "]" << "\r";
-    // cout << "pattern count : " << total_Ptn << "\r";
-    // cout << "error   count : " << total_Err << "\r";
-    cout << "iter[" << i << "] : error rate : " << ((double)total_Err) / ((double)total_Ptn) << "   error   count : " << total_Err << "\r";
+    Err_rate = (double)total_Err / (double)total_Ptn;
+    cout << "[" << setw(5) << i << "] error rate : " << Err_rate << "\r";
+    for (int j = 0; j < Past_iter; ++j) {
+      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.00005*Past_Err[Past_iter-1]) {
+        early_stop = false;
+        break;
+      }
+    }
+    if (early_stop) {
+      cout << "\nerrly stop!";
+      break;
+    }
+    else {
+      for (int j = 0; j < Past_iter-1; ++j) {
+        Past_Err[j] = Past_Err[j+1];
+      }
+      Past_Err[Past_iter-1] = Err_rate;
+    }
     delete ptn;
     delete Org_res;
     delete Aft_res;
   }
   cout << endl;
+  delete Past_Err;
+  return Err_rate;
 }
