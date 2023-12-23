@@ -37,9 +37,7 @@ std::string modelCount(std::string KCBoxPath, std::string FilePath){
     return countMes;
 }
 
-void test_function(Abc_Ntk_t* pNtk, char* yk){
-  Abc_Obj_t* pNode;
-  pNode = Abc_NtkFindNode(pNtk, yk);
+void test_function(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode){
 
   //pNode is the XOR node of original and the new one 
 
@@ -47,7 +45,7 @@ void test_function(Abc_Ntk_t* pNtk, char* yk){
     Abc_Ntk_t *cone_k = Abc_NtkCreateCone(pNtk, pNode, "New_cone", 0);
     int coneInputNum = Abc_NtkPiNum( cone_k );
 
-    Abc_FrameReplaceCurrentNetwork(abcMgr->get_Abc_Frame_t(), cone_k);
+    // Abc_FrameReplaceCurrentNetwork(abcMgr->get_Abc_Frame_t(), cone_k);
     // abccmd("show");
     Aig_Man_t *pAig = Abc_NtkToDar(cone_k, 0, 1);//aig manager
     Cnf_Dat_t *pCnf = Cnf_Derive(pAig, 1);//cnf, nOutputs: number of outputs
@@ -60,8 +58,8 @@ void test_function(Abc_Ntk_t* pNtk, char* yk){
     //assert output to be 1
     FILE * pFile;
     pFile = fopen( pFileName, "a" );
-    fprintf( pFile, "%d 0 \n",  pCnf->pVarNums[pObj->Id] );
-    fprintf( pFile, "%d 0 \n",  pCnf->pVarNums[pObj->pFanin0->Id] );
+    fprintf( pFile, "-%d 0 \n",  pCnf->pVarNums[pObj->Id] );
+    fprintf( pFile, "-%d 0 \n",  pCnf->pVarNums[pObj->pFanin0->Id] );
     fclose( pFile );
 
     Cnf_DataFree( pCnf );

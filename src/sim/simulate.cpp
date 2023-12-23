@@ -19,7 +19,6 @@ int* GenPattern(RandomNumGen myGen, int Pi_num) {
 }
 
 int* SimPattern(Abc_Ntk_t* pNtk, int* ptn) {
-  pNtk = abcMgr->get_Abc_Frame_t()->pNtkCur;
   Vec_Ptr_t* vNodes = Abc_NtkDfsIter(pNtk, 0);
   Abc_Obj_t *pPi, *pNode, *pPo;
   int ithPi, ithNode, ithPo;
@@ -69,7 +68,7 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk) {
   
   int Pi_Num = pOrgNtk->vPis->nSize;
   int Po_Num = pOrgNtk->vPos->nSize;
-  int Sim_Num = 100;
+  int Sim_Num = 100000;
   int total_Ptn = 0;
   int total_Err = 0;
   unsigned seed = 20231222;
@@ -105,12 +104,13 @@ void Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk) {
     total_Ptn += 32;
     total_Err += CountOne(err);
 
-    cout << "iteration[" << i << "]" << endl;
-    cout << "pattern count : " << total_Ptn << endl;
-    cout << "error   count : " << total_Err << endl;
-    cout << "error   rate  : " << ((double)total_Err) / ((double)total_Ptn) << endl;
+    // cout << "iteration[" << i << "]" << "\r";
+    // cout << "pattern count : " << total_Ptn << "\r";
+    // cout << "error   count : " << total_Err << "\r";
+    cout << "iter[" << i << "] : error rate : " << ((double)total_Err) / ((double)total_Ptn) << "\r";
     delete ptn;
     delete Org_res;
     delete Aft_res;
   }
+  cout << endl;
 }

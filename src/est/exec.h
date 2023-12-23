@@ -19,4 +19,4 @@ extern "C"{
 
 std::string exec(const char*);
 std::string modelCount(std::string, std::string);
-void test_function(Abc_Ntk_t*, char*);
+void test_function(Abc_Ntk_t*, Abc_Obj_t*);

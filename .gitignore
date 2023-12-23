@@ -10,6 +10,9 @@
 *.dot
 *.aig
 
+#dependency
+*.mak
+
 abc.history
 /bin/approximate
 
