@@ -3,6 +3,7 @@
 #include <random>
 #include <utility>
 #include "base/abc/abc.h"
+#include "../sim/simulate.h"
 
 enum class INST{
     RESUB      = 0,
@@ -18,3 +19,4 @@ enum class INST{
 // static const std::string inst_strings[] = {"resub", "refactor", "rewrite", "balance" };
 
 INST get_action(Abc_Ntk_t* );
+void simulated_annealing(Abc_Ntk_t*, Abc_Ntk_t* );
