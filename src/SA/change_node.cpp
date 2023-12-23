@@ -21,6 +21,7 @@ void UpdateNtk_toggle_input(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int l_neg, int r_
   Abc_Obj_t * pAnd = Abc_AigAnd(abc_aig, Abc_ObjNotCond(Abc_ObjChild0(pNode), l_neg), Abc_ObjNotCond(Abc_ObjChild1(pNode), r_neg));
   pAnd = Abc_ObjRegular(pAnd);
   Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+  Abc_NtkReassignIds(pNtk);
 }
 
 void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { // edge = 0: left, edge = 1: right
@@ -34,6 +35,7 @@ void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { /
   }
   pAnd = Abc_ObjRegular(pAnd);
   Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+  Abc_NtkReassignIds(pNtk);
 }
 
 void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { // edge = 0: left, edge = 1: right
@@ -47,5 +49,6 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { /
   }
   pAnd = Abc_ObjRegular(pAnd);
   Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+  Abc_NtkReassignIds(pNtk);
 }
 

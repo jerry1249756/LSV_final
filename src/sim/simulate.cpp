@@ -63,7 +63,7 @@ int CountOne(int in) {
 }
 
 double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
-  cout << "start simulation\nerror type = " << err_type << endl;
+  // cout << "start simulation\nerror type = " << err_type << endl;
   Vec_Ptr_t* vNodes_org = Abc_NtkDfsIter(pOrgNtk, 0);
   Vec_Ptr_t* vNodes_aft = Abc_NtkDfsIter(pAftNtk, 0);
   // check if two Network have same # input, output
@@ -129,13 +129,13 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
     Err_rate = (double)total_Err / (double)total_Ptn;
     cout << "[" << setw(5) << i << "] error rate : " << Err_rate << "\r";
     for (int j = 0; j < Past_iter; ++j) {
-      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.5*Past_Err[Past_iter-1]) {
+      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.01*Past_Err[Past_iter-1]) {
         early_stop = false;
         break;
       }
     }
     if (early_stop) {
-      cout << "\nerrly stop!";
+      // cout << "\nerrly stop!";
       break;
     }
     else {
@@ -144,11 +144,11 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
       }
       Past_Err[Past_iter-1] = Err_rate;
     }
-    delete ptn;
-    delete Org_res;
-    delete Aft_res;
+    delete[] ptn;
+    delete[] Org_res;
+    delete[] Aft_res;
   }
-  cout << endl;
-  delete Past_Err;
+  cout  << endl;
+  delete[] Past_Err;
   return Err_rate;
 }

@@ -21,6 +21,7 @@ void abccmd(string);
 
 
 int main(int argc, char** argv) {
+    std::srand(static_cast<unsigned int>(std::time(nullptr))); 
     abcMgr = new AbcMgr;
     // abccmd("read ./testcases/mcnc.genlib");
     // string lib = "./testcases/mcnc.genlib";

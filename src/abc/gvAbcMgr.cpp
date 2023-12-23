@@ -26,7 +26,6 @@ AbcMgr::abcReadDesign(string& fileName) {
     strcpy(pFileName, fileName.c_str());
     char Command[1000];
     sprintf(Command, "read %s", pFileName);
-    printf("%s\n", Command);
     Cmd_CommandExecute(pAbc, Command);
     pNtkMgr = new abcNtkMgr(pAbc->pNtkCur);
 }
