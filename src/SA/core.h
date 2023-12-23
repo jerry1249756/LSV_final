@@ -3,20 +3,23 @@
 #include <random>
 #include <utility>
 #include "base/abc/abc.h"
+#include "./change_node.h"
 #include "../sim/simulate.h"
 
 enum class INST{
-    RESUB      = 0,
-    REFACTOR   = 1,
-    REWRITE    = 2,
-    BALANCE    = 3,
-    CONST1     = 4,
-    CONST0     = 5,
-    LEFT_NEG   = 6,
-    RIGHT_NEG  = 7,
-    DOUBLE_NEG = 8,
+    RESUB      = 7,
+    REFACTOR   = 8,
+    REWRITE    = 9,
+    BALANCE    = 10,
+    CONST1_L   = 0,
+    CONST1_R   = 1,
+    CONST0_L   = 2,
+    CONST0_R   = 3,
+    LEFT_NEG   = 4,
+    RIGHT_NEG  = 5,
+    DOUBLE_NEG = 6,
 };
 // static const std::string inst_strings[] = {"resub", "refactor", "rewrite", "balance" };
 
-INST get_action(Abc_Ntk_t* );
+INST get_action();
 void simulated_annealing(Abc_Ntk_t*, Abc_Ntk_t* );

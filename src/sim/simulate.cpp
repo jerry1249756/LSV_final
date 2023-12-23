@@ -75,7 +75,7 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
   int total_Ptn = 0;
   int total_Err = 0;
   double Err_rate = 0;
-  int Past_iter = 100; // compare the past "Past_iter" error rate
+  int Past_iter = 300; // compare the past "Past_iter" error rate
   double* Past_Err = new double[Past_iter];
   
   for (int i = 0; i < Sim_Num; ++i) {
@@ -128,7 +128,7 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
     Err_rate = (double)total_Err / (double)total_Ptn;
     cout << "[" << setw(5) << i << "] error rate : " << Err_rate << "\r";
     for (int j = 0; j < Past_iter; ++j) {
-      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.0005*Past_Err[Past_iter-1]) {
+      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.05*Past_Err[Past_iter-1]) {
         early_stop = false;
         break;
       }
