@@ -8,7 +8,7 @@
 #include "../src/util/rnGen.h"
 
 void PrintBinary(int);
-int* SimPattern(Abc_Ntk_t*, int*);
+int* SimPattern(Abc_Ntk_t*, Vec_Ptr_t* , int*);
 int* GenPattern(int);
 
 double Simulation(Abc_Ntk_t*, Abc_Ntk_t*, string);

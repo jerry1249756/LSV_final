@@ -20,8 +20,7 @@ int* GenPattern(int Pi_num) {
   return ptn;
 }
 
-int* SimPattern(Abc_Ntk_t* pNtk, int* ptn) {
-  Vec_Ptr_t* vNodes = Abc_NtkDfsIter(pNtk, 0);
+int* SimPattern(Abc_Ntk_t* pNtk, Vec_Ptr_t* vNodes, int* ptn) {
   Abc_Obj_t *pPi, *pNode, *pPo;
   int ithPi, ithNode, ithPo;
   Abc_NtkForEachPi(pNtk, pPi, ithPi) {
@@ -65,6 +64,8 @@ int CountOne(int in) {
 
 double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
   cout << "start simulation\nerror type = " << err_type << endl;
+  Vec_Ptr_t* vNodes_org = Abc_NtkDfsIter(pOrgNtk, 0);
+  Vec_Ptr_t* vNodes_aft = Abc_NtkDfsIter(pAftNtk, 0);
   // check if two Network have same # input, output
   assert(pOrgNtk->vPis->nSize == pAftNtk->vPis->nSize);
   assert(pOrgNtk->vPos->nSize == pAftNtk->vPos->nSize);
@@ -80,8 +81,8 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
   
   for (int i = 0; i < Sim_Num; ++i) {
     int* ptn = GenPattern(Pi_Num);
-    int* Org_res = SimPattern(pOrgNtk, ptn);
-    int* Aft_res = SimPattern(pAftNtk, ptn);
+    int* Org_res = SimPattern(pOrgNtk, vNodes_org ,ptn);
+    int* Aft_res = SimPattern(pAftNtk, vNodes_aft ,ptn);
     int Xor = 0;
     int err = 0;
     bool early_stop = true;
@@ -128,7 +129,7 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type) {
     Err_rate = (double)total_Err / (double)total_Ptn;
     cout << "[" << setw(5) << i << "] error rate : " << Err_rate << "\r";
     for (int j = 0; j < Past_iter; ++j) {
-      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.05*Past_Err[Past_iter-1]) {
+      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.5*Past_Err[Past_iter-1]) {
         early_stop = false;
         break;
       }
