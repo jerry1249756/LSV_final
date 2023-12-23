@@ -9,6 +9,6 @@
 
 void PrintBinary(int);
 void GenPattern(int* &, int);
-void SimPattern(int* &, Abc_Ntk_t*, Vec_Ptr_t* , int*, int);
+void SimPattern(int* &, Abc_Ntk_t*, Vec_Ptr_t* , int*);
 
-double Simulation(Abc_Ntk_t*, Abc_Ntk_t*, string);
+double Simulation(Abc_Ntk_t*, Abc_Ntk_t*, string, int);

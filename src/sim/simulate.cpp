@@ -107,7 +107,7 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type, int S
     Err_rate = (double)total_Err / (double)total_Ptn;
     cout << "[" << setw(5) << i << "] error rate : " << Err_rate << "\r";
     for (int j = 0; j < Past_iter; ++j) {
-      if (abs(Err_rate-Past_Err[j]) / Past_Err[j] > 0.00001) {
+      if (abs(Err_rate-Past_Err[j]) > 0.00001) {
         early_stop = false;
         break;
       }
