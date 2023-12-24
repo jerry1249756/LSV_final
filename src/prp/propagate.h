@@ -5,8 +5,8 @@
 #include "base/abc/abc.h"
 #include "gvAbcNtk.h"
 
-Vec_Ptr_t* DFSWithLevel(Abc_Obj_t*, int);
-void Sim(Abc_Obj_t* , Vec_Ptr_t* , Vec_Ptr_t* );
+void DfsWithLv(Abc_Obj_t* ,Vec_Ptr_t* , int , Vec_Ptr_t*);
+void Sim(Abc_Obj_t* , Vec_Ptr_t* , Vec_Ptr_t*);
 bool* CreateTT(int );
 int* CalCost(bool* );
 int Best(int* );
