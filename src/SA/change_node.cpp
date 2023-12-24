@@ -36,8 +36,11 @@ void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, int edge) {// edge = 0: left, e
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
-  pNode =  vCriticals[dist(gen)];
+  // std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
+  // pNode =  vCriticals[dist(gen)];
+  
+  std::uniform_int_distribution <> dist(0, Abc_NtkObjNum(pNtk)-1);
+  while (!Abc_ObjIsNode(pNode = Abc_NtkObj(pNtk,dist(gen))));
 
 
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
@@ -65,8 +68,12 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, int edge) { // edge = 0: left, 
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
-  pNode =  vCriticals[dist(gen)];
+  // std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
+  // pNode =  vCriticals[dist(gen)];
+
+  std::uniform_int_distribution <> dist(0, Abc_NtkObjNum(pNtk)-1);
+  while (!Abc_ObjIsNode(pNode = Abc_NtkObj(pNtk,dist(gen))));
+
   
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd;
@@ -81,9 +88,25 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, int edge) { // edge = 0: left, 
   Abc_NtkReassignIds(pNtk);
 }
 
-void UpdateNtk_add_node(Abc_Ntk_t* pNtk, Abc_Obj_t* pNodeOut, Abc_Obj_t* pNodeIn1, Abc_Obj_t* pNodeIn2) {
+void UpdateNtk_add_And_node(Abc_Ntk_t* pNtk, Abc_Obj_t* pNodeOut, Abc_Obj_t* pNodeIn1, Abc_Obj_t* pNodeIn2) {
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd = Abc_AigAnd(abc_aig, pNodeIn1, pNodeIn2);
+  pAnd = Abc_ObjRegular(pAnd);
+  Abc_ObjPatchFanin(pNodeOut, pNodeIn1, pAnd);
+  Abc_NtkReassignIds(pNtk);
+}
+
+void UpdateNtk_add_Xor_node(Abc_Ntk_t* pNtk, Abc_Obj_t* pNodeOut, Abc_Obj_t* pNodeIn1, Abc_Obj_t* pNodeIn2) {
+  Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
+  Abc_Obj_t* pAnd = Abc_AigXor(abc_aig, pNodeIn1, pNodeIn2);
+  pAnd = Abc_ObjRegular(pAnd);
+  Abc_ObjPatchFanin(pNodeOut, pNodeIn1, pAnd);
+  Abc_NtkReassignIds(pNtk);
+}
+
+void UpdateNtk_add_Or_node(Abc_Ntk_t* pNtk, Abc_Obj_t* pNodeOut, Abc_Obj_t* pNodeIn1, Abc_Obj_t* pNodeIn2) {
+  Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
+  Abc_Obj_t* pAnd = Abc_AigOr(abc_aig, pNodeIn1, pNodeIn2);
   pAnd = Abc_ObjRegular(pAnd);
   Abc_ObjPatchFanin(pNodeOut, pNodeIn1, pAnd);
   Abc_NtkReassignIds(pNtk);

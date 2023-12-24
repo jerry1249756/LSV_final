@@ -4,9 +4,9 @@
 INST get_action(){
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<int> dist(0,12);
+    uniform_int_distribution<int> dist(0,14);
     int result = dist(gen); // get random actions
-    // cout << "result: " << result << "\n";
+    // // cout << "result: " << result << "\n";
     // std::cout << inst_strings[result] << "\n";
     return  static_cast<INST>(result);
 }
@@ -42,6 +42,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
             int round = 1;
             while (!real_do && round < 20) {
                 int node_nums_orig = Abc_NtkNodeNum(pNew);
+                if (node_nums_orig < 20) return;
                 if(abcMgr->get_Abc_Frame_t()->pNtkBackup){
                     Abc_NtkDelete( abcMgr->get_Abc_Frame_t()->pNtkBackup);
                 }
@@ -57,7 +58,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
                 // cout << Abc_ObjName(pNode) << endl;
                 switch(action){
                     case INST::ORCHESTRATE:
-                        abccmd("orchestrate");
+                        abccmd("orchestrate -l");
                     break;
                     case INST::CSWEEP:
                         abccmd("csweep");
@@ -92,14 +93,20 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
                     case INST::DOUBLE_NEG:
                         UpdateNtk_toggle_input(pNew, pNode, 1, 1);
                     break;
-                    case INST::ADDNODE:
-                        UpdateNtk_add_node(pNew, Abc_ObjFanout0(pNode), pNode, Abc_NtkPi(pNew,dist3(gen3)));
+                    case INST::ADDANDNODE:
+                        UpdateNtk_add_And_node(pNew, Abc_ObjFanout0(pNode), pNode, Abc_NtkPi(pNew,dist3(gen3)));
+                    break;
+                    case INST::ADDXORNODE:
+                        UpdateNtk_add_Xor_node(pNew, Abc_ObjFanout0(pNode), pNode, Abc_NtkPi(pNew,dist3(gen3)));
+                    break;
+                    case INST::ADDORNODE:
+                        UpdateNtk_add_Or_node(pNew, Abc_ObjFanout0(pNode), pNode, Abc_NtkPi(pNew,dist3(gen3)));
                     break;
                 }
                 // abccmd("ifraig");
                 // abccmd("logic");
                 // abccmd("mfs2");
-                // abccmd("strash");
+                abccmd("strash");
                 // abccmd("csweep");
                 pNew = Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t());
                 double fast_error;
@@ -137,7 +144,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
             uniform_real_distribution<double> dist2(0,1);
 
                 if (diff < 0 || dist2(gen2) < exp(-diff / T)) {
-                    // std::cout << "Replace! node_num (orig/after): " << node_nums_orig << " " << node_nums_after << "\n"; 
+                    // std::cout << "Replace! node_num (orig/after): " << node_nums_orig << " " << node_nums_after << " " << node_nums_orig-node_nums_after << "\n"; 
                     error_orig = error_after;
                     node_nums_orig = node_nums_after;
                 }
