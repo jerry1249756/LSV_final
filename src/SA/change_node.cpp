@@ -7,7 +7,7 @@ Abc_Obj_t * SelectChoiceNode(Abc_Ntk_t* pNtk) {
   Abc_Obj_t * pNode_change;
   int obj_num = Abc_NtkObjNum(pNtk);
   pNode = Abc_NtkFindNode(pNtk, "n12");
-  cout << Abc_ObjIsNode(pNode) << endl;
+  // cout << Abc_ObjIsNode(pNode) << endl;
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t * pXor = Abc_AigXor(abc_aig, (Abc_ObjChild0(pNode)), (Abc_ObjChild1(pNode)));
   pXor = Abc_ObjRegular(pXor);
@@ -24,7 +24,22 @@ void UpdateNtk_toggle_input(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int l_neg, int r_
   Abc_NtkReassignIds(pNtk);
 }
 
-void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { // edge = 0: left, edge = 1: right
+void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, int edge) {// edge = 0: left, edge = 1: right
+  Abc_Obj_t * pNode;
+  int i, Counter = 0;
+  std::vector<Abc_Obj_t* > vCriticals;
+  Abc_NtkStartReverseLevels( pNtk, 0 );
+  Abc_NtkForEachNode( pNtk, pNode, i ) //find critical path
+      if ( Abc_ObjRequiredLevel(pNode) - pNode->Level <= 1 )
+          vCriticals.push_back(pNode);
+  //random choose a node on the critical path
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+  std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
+  pNode =  vCriticals[dist(gen)];
+
+
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd;
   if (edge == 0) {
@@ -34,11 +49,25 @@ void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { /
     pAnd = Abc_AigAnd(abc_aig, Abc_ObjChild0(pNode), Abc_AigConst1(pNtk));
   }
   pAnd = Abc_ObjRegular(pAnd);
-  Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+  Abc_AigReplace(abc_aig, pNode, pAnd, 0);
   Abc_NtkReassignIds(pNtk);
 }
 
-void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { // edge = 0: left, edge = 1: right
+void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, int edge) { // edge = 0: left, edge = 1: right
+  Abc_Obj_t * pNode;
+  int i, Counter = 0;
+  std::vector<Abc_Obj_t* > vCriticals;
+  Abc_NtkStartReverseLevels( pNtk, 0 );
+  Abc_NtkForEachNode( pNtk, pNode, i ) //find critical path
+      if ( Abc_ObjRequiredLevel(pNode) - pNode->Level <= 1 )
+          vCriticals.push_back(pNode);
+  //random choose a node on the critical path
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+  std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
+  pNode =  vCriticals[dist(gen)];
+  
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd;
   if (edge == 0) {
@@ -48,7 +77,7 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { /
     pAnd = Abc_AigAnd(abc_aig, Abc_ObjChild0(pNode), Abc_ObjNot(Abc_AigConst1(pNtk)));
   }
   pAnd = Abc_ObjRegular(pAnd);
-  Abc_AigReplace(abc_aig, pNode, pAnd, 1);
+  Abc_AigReplace(abc_aig, pNode, pAnd, 0);
   Abc_NtkReassignIds(pNtk);
 }
 
