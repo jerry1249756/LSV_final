@@ -19,9 +19,10 @@ enum class INST{
     DFRAIG      = 9,
     BALANCE     = 10,
     DC2         = 11,
+    ADDNODE     = 12,
 };
 static const std::string inst_strings[] = {"const1_l", "const1_r", "const0_l", "const0_r", 
-"left_neg", "right_neg", "double_neg", "orchestrate", "csweep", "dfraig", "balance", "dc2" };
+"left_neg", "right_neg", "double_neg", "orchestrate", "csweep", "dfraig", "balance", "dc2", "addnode" };
 
 INST get_action();
 void simulated_annealing(Abc_Ntk_t*, Abc_Ntk_t* );

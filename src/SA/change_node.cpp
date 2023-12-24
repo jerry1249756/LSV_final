@@ -52,3 +52,10 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int edge) { /
   Abc_NtkReassignIds(pNtk);
 }
 
+void UpdateNtk_add_node(Abc_Ntk_t* pNtk, Abc_Obj_t* pNodeOut, Abc_Obj_t* pNodeIn1, Abc_Obj_t* pNodeIn2) {
+  Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
+  Abc_Obj_t* pAnd = Abc_AigAnd(abc_aig, pNodeIn1, pNodeIn2);
+  pAnd = Abc_ObjRegular(pAnd);
+  Abc_ObjPatchFanin(pNodeOut, pNodeIn1, pAnd);
+  Abc_NtkReassignIds(pNtk);
+}
