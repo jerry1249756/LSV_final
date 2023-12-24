@@ -34,20 +34,22 @@ void Sim(Abc_Obj_t* pRoot, Vec_Ptr_t* vNodes, Vec_Ptr_t* vFins) {
   }
 }
 
-bool* CreateTT(int input) {
-  bool* TT = new bool[16];
-  for (int i = 0; i < 16; ++i) {
+bool* CreateTT(int input, int Fin_Num) {
+  int TT_Size = pow(2, Fin_Num);
+  bool* TT = new bool[TT_Size];
+  for (int i = 0; i < TT_Size; ++i) {
     if (input & (0x01<<i)) TT[i] = true;
     else                   TT[i] = false;
   }
   return TT;
 }
 
-int* CalCost(bool* TT) {
-  int* cost = new int[4];
-  for (int i = 0; i < 4; ++i) {
+int* CalCost(bool* TT, int Fin_Num) {
+  int* cost = new int[Fin_Num];
+  int TTSize = pow(2, Fin_Num);
+  for (int i = 0; i < Fin_Num; ++i) {
     cost[i] = 0;
-    for (int j = 0; j < 16; ++j) {
+    for (int j = 0; j < TTSize; ++j) {
       if ((j % (int)pow(2,i+1)) < (int)pow(2,i)) {
         int neg = j;
         int pos = j + (int)pow(2,i);
@@ -60,10 +62,10 @@ int* CalCost(bool* TT) {
   return cost;
 }
 
-int Best(int* cost) {
+int Best(int* cost, int Fin_Num) {
   int best = 0;
   int min_cost = 16;
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < Fin_Num; ++i) {
     if (cost[i] < min_cost) {
       min_cost = cost[i];
       best = i;
@@ -73,8 +75,9 @@ int Best(int* cost) {
 }
 
 Abc_Obj_t* ChooseBest(Vec_Ptr_t* vFins, bool* TT) {
-  int* cost = CalCost(TT);
-  int best = Best(cost);
+  int Fin_Num = vFins->nSize;
+  int* cost = CalCost(TT, Fin_Num);
+  int best = Best(cost, Fin_Num);
   Abc_Obj_t* best_fin = (Abc_Obj_t*) vFins->pArray[best];
   delete cost;
   return best_fin;
@@ -85,7 +88,8 @@ Abc_Obj_t* ChoosePropagate(Abc_Obj_t* pRoot) {
   Vec_Ptr_t* vFins = Vec_PtrAlloc(4);
   DfsWithLv(pRoot, vNodes, 2, vFins);
   Sim(pRoot, vNodes, vFins);
-  bool* TT = CreateTT(pRoot->iTemp);
+  int Fin_Num = vFins->nSize;
+  bool* TT = CreateTT(pRoot->iTemp, Fin_Num);
   Abc_Obj_t* best_fin = ChooseBest(vFins, TT);
   delete[] TT;
   return best_fin;
