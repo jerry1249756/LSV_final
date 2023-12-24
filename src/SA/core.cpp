@@ -2,7 +2,7 @@
 
 
 INST get_action(){
-    int result = std::rand() % 11; // get random actions
+    int result = std::rand() % 12; // get random actions
     // int node_Nums = Abc_NtkNodeNum(pNtk);
     // int node = std::rand() % node_Nums;
     // cout << result << "\n";
@@ -23,40 +23,53 @@ double cost_diff(double rate_orig, double rate_after, int node_nums_orig, int no
 
 void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
     // parameters
-    float T = 100;
+    float T = 300;
     float T_low = 1;
     float r = 0.7;
-    int iters = 20;
+    int iters = 2000;
 
+    double error_orig = 0;
     while(T>T_low){
         for(int i=0; i<iters; i++){
-            double error_orig = 0;
+            // INST action;
+            // if (i % 2 == 0) {
+            //     action = INST::RESUB;
+            //     cout << "resub" << endl;
+            // }
+            // else {
+            //     action = INST::CONST1_L;
+            //     cout << "myoper" << endl;
+                
+            // }
+
             INST action = get_action();
             int node_nums_orig = Abc_NtkNodeNum(pNew);
             if(abcMgr->get_Abc_Frame_t()->pNtkBackup){
                 Abc_NtkDelete( abcMgr->get_Abc_Frame_t()->pNtkBackup);
             }
-            abcMgr->get_Abc_Frame_t()->pNtkBackup =  Abc_NtkDup(pNew);
-            Abc_Ntk_t* temp_back = abcMgr->get_Abc_Frame_t()->pNtkBackup;
-            
+            Abc_Ntk_t* temp_back = Abc_NtkDup(pNew);
+             
             random_device rd;
             mt19937 gen(rd());
             uniform_int_distribution<int> dist(0,Abc_NtkObjNum(pNew));
             Abc_Obj_t* pNode;
             while (!Abc_ObjIsNode(pNode = Abc_NtkObj(pNew,dist(gen))));
-
+            cout << Abc_ObjName(pNode) << endl;
             switch(action){
                 case INST::RESUB:
-                    abccmd("resub");
+                    abccmd("orchestrate");
                 break;
                 case INST::REFACTOR:
-                    abccmd("refactor -z");
+                    abccmd("orchestrate -z");
                 break;
                 case INST::REWRITE:
-                    abccmd("rewrite");
+                    abccmd("orchestrate -l");
                 break;
                 case INST::BALANCE:
                     abccmd("balance");
+                break;
+                case INST::DC2:
+                    abccmd("dc2");
                 break;
                 case INST::CONST1_L:
                     UpdateNtk_const1_propagate(pNew, pNode, 0);
@@ -84,17 +97,32 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
             abccmd("logic");
             abccmd("mfs2");
             abccmd("sweep");
-            //sweep
             abccmd("strash");
-            pNew = abcMgr->get_Abc_Frame_t()->pNtkCur;
+            pNew = Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t());
+            double fast_error;
+            bool skip = false;
+                
+            if (!(action == INST::RESUB || action == INST::REFACTOR || action == INST::REWRITE || action == INST::BALANCE)){
+                fast_error = Simulation(pOrig, pNew, "nmed", 500);
+                cout << "fast_error " << fast_error << endl;
+                cout << "error_orig " << error_orig << endl;
+                if (fast_error - error_orig > 0.01) skip = true;
+            }
+            if (skip) {
+                cout << "skip " << endl;
+                pNew = temp_back;
+                Abc_FrameReplaceCurrentNetwork(abcMgr->get_Abc_Frame_t(), pNew);
+                // abcMgr->get_Abc_Frame_t()->pNtkBackup = nullptr;
+                continue;
+            }
 
             double error_after, error_new;
-            error_new = Simulation(pOrig, pNew, "nmed");
 
             if (action == INST::RESUB || action == INST::REFACTOR || action == INST::REWRITE || action == INST::BALANCE){
                 error_after = error_orig;
             }
             else {
+                error_new = Simulation(pOrig, pNew, "nmed", 30000);
                 error_after = error_new;
             }
             int node_nums_after = Abc_NtkNodeNum(pNew);
@@ -111,7 +139,8 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
             else {
                 // pNew = abcMgr->get_Abc_Frame_t()->pNtkBackup;
                 pNew = temp_back;
-                abcMgr->get_Abc_Frame_t()->pNtkBackup = nullptr;
+                Abc_FrameReplaceCurrentNetwork(abcMgr->get_Abc_Frame_t(), pNew);
+                // abcMgr->get_Abc_Frame_t()->pNtkBackup = nullptr;
             }
             // Abc_NtkDelete(pNewDup);
             // Abc_NtkDelete(pNewBackUp);

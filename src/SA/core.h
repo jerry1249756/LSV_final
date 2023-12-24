@@ -18,9 +18,10 @@ enum class INST{
     REFACTOR   = 8,
     REWRITE    = 9,
     BALANCE    = 10,
+    DC2        = 11,
 };
 static const std::string inst_strings[] = {"const1_l", "const1_r",
- "const0_l", "const0_r", "left_neg", "right_neg", "double_neg", "resub", "refactor", "rewrite", "balance" };
+ "const0_l", "const0_r", "left_neg", "right_neg", "double_neg", "resub", "refactor", "rewrite", "balance", "dc2" };
 
 INST get_action();
 void simulated_annealing(Abc_Ntk_t*, Abc_Ntk_t* );
