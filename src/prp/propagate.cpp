@@ -23,10 +23,7 @@ void Sim(Abc_Obj_t* pRoot, Vec_Ptr_t* vNodes, Vec_Ptr_t* vFins) {
       ++ithFin;
       Vec_PtrPush(vFins, n);
     }
-  }
-  for (int i = 0; i < vNodes->nSize; ++i) {
-    Abc_Obj_t* n = (Abc_Obj_t*) vNodes->pArray[i];
-    if (Vec_PtrFind(vFins, n) == -1) {
+    else {
       int fin0res = (Abc_ObjFaninC0(n))? ~Abc_ObjFanin0(n)->iTemp : Abc_ObjFanin0(n)->iTemp;
       int fin1res = (Abc_ObjFaninC1(n))? ~Abc_ObjFanin1(n)->iTemp : Abc_ObjFanin1(n)->iTemp;
       int res = fin0res & fin1res;
