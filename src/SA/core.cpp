@@ -3,9 +3,6 @@
 
 INST get_action(){
     int result = std::rand() % 12; // get random actions
-    // int node_Nums = Abc_NtkNodeNum(pNtk);
-    // int node = std::rand() % node_Nums;
-    // cout << result << "\n";
     std::cout << inst_strings[result] << "\n";
     return  static_cast<INST>(result);
 }
@@ -54,16 +51,16 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
             uniform_int_distribution<int> dist(0,Abc_NtkObjNum(pNew));
             Abc_Obj_t* pNode;
             while (!Abc_ObjIsNode(pNode = Abc_NtkObj(pNew,dist(gen))));
-            cout << Abc_ObjName(pNode) << endl;
+            // cout << Abc_ObjName(pNode) << endl;
             switch(action){
-                case INST::RESUB:
+                case INST::ORCHESTRATE:
                     abccmd("orchestrate");
                 break;
-                case INST::REFACTOR:
-                    abccmd("orchestrate -z");
+                case INST::CSWEEP:
+                    abccmd("csweep");
                 break;
-                case INST::REWRITE:
-                    abccmd("orchestrate -l");
+                case INST::DFRAIG:
+                    abccmd("dfraig");
                 break;
                 case INST::BALANCE:
                     abccmd("balance");
@@ -93,19 +90,19 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
                     UpdateNtk_toggle_input(pNew, pNode, 1, 1);
                 break;
             }
-            abccmd("fraig");
-            abccmd("logic");
-            abccmd("mfs2");
-            abccmd("sweep");
-            abccmd("strash");
+            // abccmd("fraig");
+            // abccmd("logic");
+            // abccmd("mfs2");
+            // abccmd("sweep");
+            // abccmd("strash");
             pNew = Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t());
             double fast_error;
             bool skip = false;
                 
-            if (!(action == INST::RESUB || action == INST::REFACTOR || action == INST::REWRITE || action == INST::BALANCE)){
+            if (!(action == INST::ORCHESTRATE || action == INST::CSWEEP || action == INST::DFRAIG || action == INST::BALANCE)){
                 fast_error = Simulation(pOrig, pNew, "nmed", 500);
-                cout << "fast_error " << fast_error << endl;
-                cout << "error_orig " << error_orig << endl;
+                // cout << "fast_error " << fast_error << endl;
+                // cout << "error_orig " << error_orig << endl;
                 if (fast_error - error_orig > 0.01) skip = true;
             }
             if (skip) {
@@ -118,7 +115,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
 
             double error_after, error_new;
 
-            if (action == INST::RESUB || action == INST::REFACTOR || action == INST::REWRITE || action == INST::BALANCE){
+            if (action == INST::ORCHESTRATE || action == INST::CSWEEP || action == INST::DFRAIG || action == INST::BALANCE){
                 error_after = error_orig;
             }
             else {
@@ -127,7 +124,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
             }
             int node_nums_after = Abc_NtkNodeNum(pNew);
             double diff = 15000* cost_diff(error_orig, error_after, node_nums_orig, node_nums_after);
-            std::cout << "cost prob:" << exp(-diff / T)  << "\n"; 
+            // std::cout << "cost prob:" << exp(-diff / T)  << "\n"; 
             mt19937 gen2(rd());
             uniform_real_distribution<double> dist2(0,1);
 
