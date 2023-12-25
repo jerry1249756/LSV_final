@@ -1,6 +1,6 @@
 #include "fec.h"
 
-void Fraig(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>> fecGrps) {
+void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>> fecGrps) {
   Vec_Ptr_t* DfsList = Abc_NtkDfsIter(pNtk, 0);
   int Pi_Num = pNtk->vFins->nSize;
   int Sim_Num = 100;
