@@ -4,7 +4,7 @@
 INST get_action(){
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<int> dist(0,10);
+    uniform_int_distribution<int> dist(0,13);
     int result = dist(gen); // get random actions
     // // cout << "result: " << result << "\n";
     std::cout << inst_strings[result] << "\n";
@@ -104,6 +104,9 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
                     break;
                     case INST::ADDORNODE:
                         UpdateNtk_add_Or_node(pNew, Abc_ObjFanout0(pNode), pNode, Abc_NtkPi(pNew,dist2(gen2)));
+                    break;
+                    case INST::FEC:
+                        UpdateNtk_using_FEC(pNew);
                     break;
                 }
                 // abccmd("ifraig");

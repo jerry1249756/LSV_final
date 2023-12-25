@@ -113,7 +113,7 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk) {
   //     // pNode = Abc_NtkObj(pNtk,dist(gen));
   // }
   Abc_Obj_t* pChange = ChoosePropagate(pNode);
-  cout << "type: " << Abc_ObjType(pChange) << endl;
+  // cout << "type: " << Abc_ObjType(pChange) << endl;
   Abc_Obj_t* pReplace;
   Abc_Obj_t* pReserve;
   Abc_Obj_t* fanin0 = Abc_ObjFanin0(pNode);
@@ -193,7 +193,7 @@ void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk) {
   Fec(pNtk, fec_grps, const_grp, DfsList);
   for (i = 0; i < DfsList->nSize; i++) {
     Abc_Obj_t* n = (Abc_Obj_t*)DfsList->pArray[i];
-    cout << const_grp[n->Id] << endl;
+    // cout << const_grp[n->Id] << endl;
   }
   int times = 0;
   for (i = 0; i < fec_grps.size(); i++) {
@@ -206,7 +206,7 @@ void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk) {
       }
     }
   }
-  cout << "\n";
+  // cout << "\n";
   Abc_NtkReassignIds(pNtk);
   
 }

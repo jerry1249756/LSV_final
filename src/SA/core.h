@@ -23,9 +23,10 @@ enum class INST{
     ADDANDNODE  = 10,
     ADDXORNODE  = 11,
     ADDORNODE   = 12,
+    FEC         = 13,
 };
 static const std::string inst_strings[] = {"const1", "const0", "left_neg", "right_neg", "double_neg",
- "orchestrate", "csweep", "dfraig", "balance", "dc2", "add_and_node", "add_Xor_node", "add_or_node" };
+ "orchestrate", "csweep", "dfraig", "balance", "dc2", "add_and_node", "add_Xor_node", "add_or_node", "fec" };
 
 INST get_action();
 void simulated_annealing(Abc_Ntk_t*, Abc_Ntk_t* );
