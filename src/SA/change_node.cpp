@@ -179,9 +179,10 @@ void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk) {
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   vector<vector<Abc_Obj_t*>> fec_grps;
   vector<Abc_Obj_t*> fec_grp;
+  vector<float> const_grp(Abc_NtkObjNum(pNtk), 0);
   Abc_Obj_t* pNode;
   int i;
-  Vec_Ptr_t* vNodes;
+  Vec_Ptr_t* DfsList = Abc_NtkDfsIter(pNtk, 0);
   Abc_NtkForEachObj(pNtk, pNode, i) {
     assert(Abc_ObjType(pNode) != 0);
     if (!Abc_ObjIsPo(pNode)) {
@@ -189,7 +190,11 @@ void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk) {
     }
   }
   fec_grps.push_back(fec_grp);
-  Fec(pNtk, fec_grps);
+  Fec(pNtk, fec_grps, const_grp, DfsList);
+  for (i = 0; i < DfsList->nSize; i++) {
+    Abc_Obj_t* n = (Abc_Obj_t*)DfsList->pArray[i];
+    cout << const_grp[n->Id] << endl;
+  }
   int times = 0;
   for (i = 0; i < fec_grps.size(); i++) {
     for (int j = 1; j < fec_grps[i].size(); j++) {
@@ -203,4 +208,5 @@ void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk) {
   }
   cout << "\n";
   Abc_NtkReassignIds(pNtk);
+  
 }
