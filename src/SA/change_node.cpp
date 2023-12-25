@@ -36,59 +36,48 @@ void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution <int> dist(0, Abc_NtkObjNum(pNtk)-1);
-  Abc_Obj_t * pNode = Abc_NtkObj(pNtk,dist(gen));
+  Abc_Obj_t * pNode;
+  while(Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen))));
   // cout << "isPi: " << Abc_ObjIsPi(pNode) << endl;
   // cout << "faninnum: " << Abc_ObjFaninNum(pNode) << endl;
 
-  if (Abc_ObjIsPi(pNode) || Abc_ObjFaninNum(pNode) != 2) return;
-  // while (Abc_ObjIsPi(pNode)) {
-  //   int temp = dist(gen);
-  //   pNode = Abc_NtkObj(pNtk,temp);
-  //   cout << temp;
+  // if (Abc_ObjIsPi(pNode) || Abc_ObjFaninNum(pNode) != 2) return;
+  // Abc_Obj_t* pChange = ChoosePropagate(pNode);
+  // // cout << "type: " << Abc_ObjType(pChange) << endl;
+  // Abc_Obj_t* pReplace;
+  // Abc_Obj_t* pReserve;
+  // Abc_Obj_t* fanin0 = Abc_ObjFanin0(pNode);
+  // Abc_Obj_t* fanin1 = Abc_ObjFanin1(pNode);
+
+  // if (fanin0 == pChange) {
+  //   pReplace = pNode;
+  //   pReserve = fanin1;
   // }
-  // while (Abc_ObjIsPi(Abc_ObjFanin0(pNode)) || Abc_ObjIsPi(Abc_ObjFanin1(pNode))) {
-  //   while (Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen)))) {
-  //     // int temp = dist(gen);
-  //     // pNode = Abc_NtkObj(pNtk,temp);
-  //     // cout << temp;
+  // else if (!Abc_ObjIsPi(fanin0)) {
+  //   if (Abc_ObjFanin0(fanin0) == pChange) {
+  //     pReplace = fanin0;
+  //     pReserve = Abc_ObjFanin1(fanin0);
   //   }
   // }
-  Abc_Obj_t* pChange = ChoosePropagate(pNode);
-  cout << "type: " << Abc_ObjType(pChange) << endl;
-  Abc_Obj_t* pReplace;
-  Abc_Obj_t* pReserve;
-  Abc_Obj_t* fanin0 = Abc_ObjFanin0(pNode);
-  Abc_Obj_t* fanin1 = Abc_ObjFanin1(pNode);
-
-  if (fanin0 == pChange) {
-    pReplace = pNode;
-    pReserve = fanin1;
-  }
-  else if (!Abc_ObjIsPi(fanin0)) {
-    if (Abc_ObjFanin0(fanin0) == pChange) {
-      pReplace = fanin0;
-      pReserve = Abc_ObjFanin1(fanin0);
-    }
-  }
-  if (fanin1 == pChange) {
-    pReplace = pNode;
-    pReserve = fanin0;
-  }
-  else  if (!Abc_ObjIsPi(fanin1)){
-    if (Abc_ObjFanin0(fanin1) == pChange) {
-      pReplace = fanin1;
-      pReserve = Abc_ObjFanin1(fanin1);
-    }
-  }
+  // if (fanin1 == pChange) {
+  //   pReplace = pNode;
+  //   pReserve = fanin0;
+  // }
+  // else  if (!Abc_ObjIsPi(fanin1)){
+  //   if (Abc_ObjFanin0(fanin1) == pChange) {
+  //     pReplace = fanin1;
+  //     pReserve = Abc_ObjFanin1(fanin1);
+  //   }
+  // }
   
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd;
   
-  pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), pReserve);
-  // pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), Abc_ObjFanin0(pNode));
+  // pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), pReserve);
+  pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), Abc_ObjFanin0(pNode));
   pAnd = Abc_ObjRegular(pAnd);
-  // Abc_AigReplace(abc_aig, pNode, pAnd, 0);
-  Abc_AigReplace(abc_aig, pReplace, pAnd, 0);
+  Abc_AigReplace(abc_aig, pNode, pAnd, 0);
+  // Abc_AigReplace(abc_aig, pReplace, pAnd, 0);
   Abc_NtkReassignIds(pNtk);
 }
 
@@ -103,51 +92,51 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution <int> dist(0, Abc_NtkObjNum(pNtk)-1);
-  Abc_Obj_t * pNode = Abc_NtkObj(pNtk,dist(gen));
+  Abc_Obj_t * pNode;
+  while(Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen))));
   // cout << "isPi: " << Abc_ObjIsPi(pNode) << endl;
   // cout << "faninnum: " << Abc_ObjFaninNum(pNode) << endl;
-  if (Abc_ObjIsPi(pNode) || Abc_ObjFaninNum(pNode) != 2) return;
+  // if (Abc_ObjIsPi(pNode) || Abc_ObjFaninNum(pNode) != 2) return;
   //   pNode = Abc_NtkObj(pNtk,dist(gen));
   // while (Abc_ObjIsPi(Abc_ObjFanin0(pNode)) || Abc_ObjIsPi(Abc_ObjFanin1(pNode))) {
   //   while (Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen)))){}
   //     // pNode = Abc_NtkObj(pNtk,dist(gen));
   // }
-  Abc_Obj_t* pChange = ChoosePropagate(pNode);
-  // cout << "type: " << Abc_ObjType(pChange) << endl;
-  Abc_Obj_t* pReplace;
-  Abc_Obj_t* pReserve;
-  Abc_Obj_t* fanin0 = Abc_ObjFanin0(pNode);
-  Abc_Obj_t* fanin1 = Abc_ObjFanin1(pNode);
+  // Abc_Obj_t* pChange = ChoosePropagate(pNode);
+  // // cout << "type: " << Abc_ObjType(pChange) << endl;
+  // Abc_Obj_t* pReplace;
+  // Abc_Obj_t* pReserve;
+  // Abc_Obj_t* fanin0 = Abc_ObjFanin0(pNode);
+  // Abc_Obj_t* fanin1 = Abc_ObjFanin1(pNode);
 
-  if (fanin0 == pChange) {
-    pReplace = pNode;
-    pReserve = fanin1;
-  }
-  else  if (!Abc_ObjIsPi(fanin0)){
-    if (Abc_ObjFanin0(fanin0) == pChange) {
-      pReplace = fanin0;
-      pReserve = Abc_ObjFanin1(fanin0);
-    }
-  }
-  if (fanin1 == pChange) {
-    pReplace = pNode;
-    pReserve = fanin0;
-  }
-  else  if (!Abc_ObjIsPi(fanin1)){
-    if (Abc_ObjFanin0(fanin1) == pChange) {
-      pReplace = fanin1;
-      pReserve = Abc_ObjFanin1(fanin1);
-    }
-  }
+  // if (fanin0 == pChange) {
+  //   pReplace = pNode;
+  //   pReserve = fanin1;
+  // }
+  // else  if (!Abc_ObjIsPi(fanin0)){
+  //   if (Abc_ObjFanin0(fanin0) == pChange) {
+  //     pReplace = fanin0;
+  //     pReserve = Abc_ObjFanin1(fanin0);
+  //   }
+  // }
+  // if (fanin1 == pChange) {
+  //   pReplace = pNode;
+  //   pReserve = fanin0;
+  // }
+  // else  if (!Abc_ObjIsPi(fanin1)){
+  //   if (Abc_ObjFanin0(fanin1) == pChange) {
+  //     pReplace = fanin1;
+  //     pReserve = Abc_ObjFanin1(fanin1);
+  //   }
+  // }
   
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd;
-  pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), pReserve);
-  // pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), Abc_ObjFanin0(pNode));
-  
+  // pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), pReserve);
+  pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), Abc_ObjFanin0(pNode));
   pAnd = Abc_ObjRegular(pAnd);
-  // Abc_AigReplace(abc_aig, pNode, pAnd, 0);
-  Abc_AigReplace(abc_aig, pReplace, pAnd, 0);
+  Abc_AigReplace(abc_aig, pNode, pAnd, 0);
+  // Abc_AigReplace(abc_aig, pReplace, pAnd, 0);
   Abc_NtkReassignIds(pNtk);
 }
 

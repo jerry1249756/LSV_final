@@ -7,7 +7,7 @@ INST get_action(){
     uniform_int_distribution<int> dist(0,13);
     int result = dist(gen); // get random actions
     // // cout << "result: " << result << "\n";
-    std::cout << inst_strings[result] << "\n";
+    // std::cout << inst_strings[result] << "\n";
     return  static_cast<INST>(result);
 }
 

@@ -37,7 +37,7 @@ void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>>& fecGrps, vector<float>& co
         fecGrps.erase(fecGrps.begin()+j);
       }
     }
-    cout << "iter[" << i << "], fecGrps[" << fecGrps.size() << "], max[" << max_size << "], total[" << total_node << "]" << "\r";
+    // cout << "iter[" << i << "], fecGrps[" << fecGrps.size() << "], max[" << max_size << "], total[" << total_node << "]" << "\r";
   }
   for (int i = 0; i < DfsList->nSize; ++i) {
     Abc_Obj_t* n = (Abc_Obj_t*) DfsList->pArray[i];
