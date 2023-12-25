@@ -1,3 +1,6 @@
+#ifndef SIMULATE_H
+#define SIMULATE_H
+
 #include <iostream>
 #include <cmath>
 #include <iomanip>
@@ -13,3 +16,4 @@ int* SimPattern(Abc_Ntk_t*, Vec_Ptr_t* , int*);
 int CountOne(int);
 
 double Simulation(Abc_Ntk_t*, Abc_Ntk_t*, string, int, Vec_Ptr_t*);
+#endif

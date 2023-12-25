@@ -24,67 +24,130 @@ void UpdateNtk_toggle_input(Abc_Ntk_t* pNtk, Abc_Obj_t* pNode, int l_neg, int r_
   Abc_NtkReassignIds(pNtk);
 }
 
-void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk, int edge) {// edge = 0: left, edge = 1: right
-  Abc_Obj_t * pNode;
-  int i, Counter = 0;
-  std::vector<Abc_Obj_t* > vCriticals;
-  Abc_NtkStartReverseLevels( pNtk, 0 );
-  Abc_NtkForEachNode( pNtk, pNode, i ) //find critical path
-      if ( Abc_ObjRequiredLevel(pNode) - pNode->Level <= 1 )
-          vCriticals.push_back(pNode);
-  //random choose a node on the critical path
+void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk) {
+  // Abc_Obj_t * pNode;
+  // int i, Counter = 0;
+  // std::vector<Abc_Obj_t* > vCriticals;
+  // Abc_NtkStartReverseLevels( pNtk, 0 );
+  // Abc_NtkForEachNode( pNtk, pNode, i ) //find critical path
+  //     if ( Abc_ObjRequiredLevel(pNode) - pNode->Level <= 1 )
+  //         vCriticals.push_back(pNode);
+  // //random choose a node on the critical path
   std::random_device rd;
   std::mt19937 gen(rd());
+  std::uniform_int_distribution <int> dist(0, Abc_NtkObjNum(pNtk)-1);
+  Abc_Obj_t * pNode = Abc_NtkObj(pNtk,dist(gen));
+  // cout << "isPi: " << Abc_ObjIsPi(pNode) << endl;
+  // cout << "faninnum: " << Abc_ObjFaninNum(pNode) << endl;
 
-  // std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
-  // pNode =  vCriticals[dist(gen)];
+  if (Abc_ObjIsPi(pNode) || Abc_ObjFaninNum(pNode) != 2) return;
+  // while (Abc_ObjIsPi(pNode)) {
+  //   int temp = dist(gen);
+  //   pNode = Abc_NtkObj(pNtk,temp);
+  //   cout << temp;
+  // }
+  // while (Abc_ObjIsPi(Abc_ObjFanin0(pNode)) || Abc_ObjIsPi(Abc_ObjFanin1(pNode))) {
+  //   while (Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen)))) {
+  //     // int temp = dist(gen);
+  //     // pNode = Abc_NtkObj(pNtk,temp);
+  //     // cout << temp;
+  //   }
+  // }
+  Abc_Obj_t* pChange = ChoosePropagate(pNode);
+  cout << "type: " << Abc_ObjType(pChange) << endl;
+  Abc_Obj_t* pReplace;
+  Abc_Obj_t* pReserve;
+  Abc_Obj_t* fanin0 = Abc_ObjFanin0(pNode);
+  Abc_Obj_t* fanin1 = Abc_ObjFanin1(pNode);
+
+  if (fanin0 == pChange) {
+    pReplace = pNode;
+    pReserve = fanin1;
+  }
+  else if (!Abc_ObjIsPi(fanin0)) {
+    if (Abc_ObjFanin0(fanin0) == pChange) {
+      pReplace = fanin0;
+      pReserve = Abc_ObjFanin1(fanin0);
+    }
+  }
+  if (fanin1 == pChange) {
+    pReplace = pNode;
+    pReserve = fanin0;
+  }
+  else  if (!Abc_ObjIsPi(fanin1)){
+    if (Abc_ObjFanin0(fanin1) == pChange) {
+      pReplace = fanin1;
+      pReserve = Abc_ObjFanin1(fanin1);
+    }
+  }
   
-  std::uniform_int_distribution <> dist(0, Abc_NtkObjNum(pNtk)-1);
-  while (!Abc_ObjIsNode(pNode = Abc_NtkObj(pNtk,dist(gen))));
-
-
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd;
-  if (edge == 0) {
-    pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), Abc_ObjChild1(pNode));
-  }
-  else {
-    pAnd = Abc_AigAnd(abc_aig, Abc_ObjChild0(pNode), Abc_AigConst1(pNtk));
-  }
+  
+  pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), pReserve);
+  // pAnd = Abc_AigAnd(abc_aig, Abc_AigConst1(pNtk), Abc_ObjFanin0(pNode));
   pAnd = Abc_ObjRegular(pAnd);
-  Abc_AigReplace(abc_aig, pNode, pAnd, 0);
+  // Abc_AigReplace(abc_aig, pNode, pAnd, 0);
+  Abc_AigReplace(abc_aig, pReplace, pAnd, 0);
   Abc_NtkReassignIds(pNtk);
 }
 
-void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk, int edge) { // edge = 0: left, edge = 1: right
-  Abc_Obj_t * pNode;
-  int i, Counter = 0;
-  std::vector<Abc_Obj_t* > vCriticals;
-  Abc_NtkStartReverseLevels( pNtk, 0 );
-  Abc_NtkForEachNode( pNtk, pNode, i ) //find critical path
-      if ( Abc_ObjRequiredLevel(pNode) - pNode->Level <= 1 )
-          vCriticals.push_back(pNode);
+void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk) {
+  // int i, Counter = 0;
+  // std::vector<Abc_Obj_t* > vCriticals;
+  // Abc_NtkStartReverseLevels( pNtk, 0 );
+  // Abc_NtkForEachNode( pNtk, pNode, i ) //find critical path
+  //     if ( Abc_ObjRequiredLevel(pNode) - pNode->Level <= 1 )
+  //         vCriticals.push_back(pNode);
   //random choose a node on the critical path
   std::random_device rd;
   std::mt19937 gen(rd());
+  std::uniform_int_distribution <int> dist(0, Abc_NtkObjNum(pNtk)-1);
+  Abc_Obj_t * pNode = Abc_NtkObj(pNtk,dist(gen));
+  // cout << "isPi: " << Abc_ObjIsPi(pNode) << endl;
+  // cout << "faninnum: " << Abc_ObjFaninNum(pNode) << endl;
+  if (Abc_ObjIsPi(pNode) || Abc_ObjFaninNum(pNode) != 2) return;
+  //   pNode = Abc_NtkObj(pNtk,dist(gen));
+  // while (Abc_ObjIsPi(Abc_ObjFanin0(pNode)) || Abc_ObjIsPi(Abc_ObjFanin1(pNode))) {
+  //   while (Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen)))){}
+  //     // pNode = Abc_NtkObj(pNtk,dist(gen));
+  // }
+  Abc_Obj_t* pChange = ChoosePropagate(pNode);
+  cout << "type: " << Abc_ObjType(pChange) << endl;
+  Abc_Obj_t* pReplace;
+  Abc_Obj_t* pReserve;
+  Abc_Obj_t* fanin0 = Abc_ObjFanin0(pNode);
+  Abc_Obj_t* fanin1 = Abc_ObjFanin1(pNode);
 
-  // std::uniform_int_distribution <> dist(0, vCriticals.size()-1);
-  // pNode =  vCriticals[dist(gen)];
-
-  std::uniform_int_distribution <> dist(0, Abc_NtkObjNum(pNtk)-1);
-  while (!Abc_ObjIsNode(pNode = Abc_NtkObj(pNtk,dist(gen))));
-
+  if (fanin0 == pChange) {
+    pReplace = pNode;
+    pReserve = fanin1;
+  }
+  else  if (!Abc_ObjIsPi(fanin0)){
+    if (Abc_ObjFanin0(fanin0) == pChange) {
+      pReplace = fanin0;
+      pReserve = Abc_ObjFanin1(fanin0);
+    }
+  }
+  if (fanin1 == pChange) {
+    pReplace = pNode;
+    pReserve = fanin0;
+  }
+  else  if (!Abc_ObjIsPi(fanin1)){
+    if (Abc_ObjFanin0(fanin1) == pChange) {
+      pReplace = fanin1;
+      pReserve = Abc_ObjFanin1(fanin1);
+    }
+  }
   
   Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
   Abc_Obj_t* pAnd;
-  if (edge == 0) {
-    pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), Abc_ObjChild1(pNode));
-  }
-  else {
-    pAnd = Abc_AigAnd(abc_aig, Abc_ObjChild0(pNode), Abc_ObjNot(Abc_AigConst1(pNtk)));
-  }
+  pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), pReserve);
+  // pAnd = Abc_AigAnd(abc_aig, Abc_ObjNot(Abc_AigConst1(pNtk)), Abc_ObjFanin0(pNode));
+  
   pAnd = Abc_ObjRegular(pAnd);
-  Abc_AigReplace(abc_aig, pNode, pAnd, 0);
+  // Abc_AigReplace(abc_aig, pNode, pAnd, 0);
+  Abc_AigReplace(abc_aig, pReplace, pAnd, 0);
   Abc_NtkReassignIds(pNtk);
 }
 

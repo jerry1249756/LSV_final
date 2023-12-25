@@ -1,3 +1,6 @@
+#ifndef PROPAGATE_H
+#define PROPAGATE_H
+
 #include <iostream>
 #include <cmath>
 #include <iomanip>
@@ -12,3 +15,4 @@ int* CalCost(bool*, int);
 int Best(int*, int);
 Abc_Obj_t* ChooseBest(Vec_Ptr_t*, bool*);
 Abc_Obj_t* ChoosePropagate(Abc_Obj_t*);
+#endif

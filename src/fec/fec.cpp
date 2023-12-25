@@ -1,9 +1,9 @@
 #include "fec.h"
 
-void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>> fecGrps) {
+void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>>& fecGrps) {
   Vec_Ptr_t* DfsList = Abc_NtkDfsIter(pNtk, 0);
-  int Pi_Num = pNtk->vFins->nSize;
-  int Sim_Num = 100;
+  int Pi_Num = Abc_NtkPiNum(pNtk);
+  int Sim_Num = 50000;
   cout << "total node" << Abc_NtkObjNum(pNtk) << endl;
   for (int i = 0; i < Sim_Num; ++i) {
     int* ptn = GenPattern(Pi_Num);
@@ -21,12 +21,14 @@ void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>> fecGrps) {
       }
     }
     int max_size = 0;
+    int total_node = 0;
     for (int j = fecGrps.size()-1; j >= 0; --j) {
+      total_node += fecGrps[j].size();
       if (max_size < fecGrps[j].size()) max_size = fecGrps[j].size();
       if (fecGrps[j].size() <= 1) {
         fecGrps.erase(fecGrps.begin()+j);
       }
     }
-    cout << "iter[" << i << "], " << "fecGrps.size[" << fecGrps.size() << "], " << "max.size[" << max_size << "]" << endl;
+    cout << "iter[" << i << "], fecGrps[" << fecGrps.size() << "], max[" << max_size << "], total[" << total_node << "]" << endl;
   }
 }

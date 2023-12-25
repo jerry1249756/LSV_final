@@ -8,6 +8,7 @@ void DfsWithLv(Abc_Obj_t* pNode, Vec_Ptr_t* vNodes, int level, Vec_Ptr_t* vFins)
     if (Vec_PtrFind(vNodes, fin1) == -1) DfsWithLv(fin1, vNodes, level-1, vFins);
   }
   else {
+    // cout << vFins->nSize << ' ' << Abc_ObjName(pNode) << endl;
     Vec_PtrPush(vFins, pNode);
   }
   Vec_PtrPush(vNodes, pNode);
@@ -40,6 +41,7 @@ bool* CreateTT(int input, int Fin_Num) {
   for (int i = 0; i < TT_Size; ++i) {
     if (input & (0x01<<i)) TT[i] = true;
     else                   TT[i] = false;
+    // cout << i << ' ' << TT[i] << endl;
   }
   return TT;
 }

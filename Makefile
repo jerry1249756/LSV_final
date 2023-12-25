@@ -1,5 +1,5 @@
-SRCPKGS  = util abc est SA sim prp fec
-LIBPKGS  = util abc est SA sim prp fec
+SRCPKGS  = util abc est SA fec sim prp
+LIBPKGS  = util abc est SA fec sim prp
 
 MAIN     = main
 
