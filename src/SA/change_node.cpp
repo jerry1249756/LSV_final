@@ -38,6 +38,7 @@ void UpdateNtk_const1_propagate(Abc_Ntk_t* pNtk) {
   std::uniform_int_distribution <int> dist(0, Abc_NtkObjNum(pNtk)-1);
   Abc_Obj_t * pNode;
   while(Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen))));
+  if (Abc_ObjFaninNum(pNode) != 2) return;
   // cout << "isPi: " << Abc_ObjIsPi(pNode) << endl;
   // cout << "faninnum: " << Abc_ObjFaninNum(pNode) << endl;
 
@@ -94,6 +95,7 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t* pNtk) {
   std::uniform_int_distribution <int> dist(0, Abc_NtkObjNum(pNtk)-1);
   Abc_Obj_t * pNode;
   while(Abc_ObjIsPi(pNode = Abc_NtkObj(pNtk,dist(gen))));
+  if (Abc_ObjFaninNum(pNode) != 2) return;
   // cout << "isPi: " << Abc_ObjIsPi(pNode) << endl;
   // cout << "faninnum: " << Abc_ObjFaninNum(pNode) << endl;
   // if (Abc_ObjIsPi(pNode) || Abc_ObjFaninNum(pNode) != 2) return;

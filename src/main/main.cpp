@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     abccmd("read ./testcases/mcnc.genlib");
     // string lib = "./testcases/mcnc.genlib";
     // string map = "-m ./testcases/c7552.blif";
-    string map = "./testcases/mem_ctrl.blif";
+    string map = "./testcases/voter.blif";
 
     // abcMgr->abcReadDesign(lib);
     abcMgr->abcReadDesign(map);

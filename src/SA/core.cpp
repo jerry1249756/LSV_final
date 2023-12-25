@@ -42,7 +42,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
         abccmd("map");
         double area = Abc_NtkGetMappedArea(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));
         // std::cout << "area:" << area << ", current error:"  << error_orig << "\n"; 
-        std::cout <<  "(" << area << ", " <<  error_orig << "),\n";
+        std::cout <<  "area: " << area << " error: " <<  error_orig << "\n";
         abccmd("strash");
         pNew = Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t());
         for(int i=0; i<iters; i++){
