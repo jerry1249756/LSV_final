@@ -6,4 +6,4 @@
 #include "gvAbcNtk.h"
 #include "./../sim/simulate.h"
 
-void Fraig(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t>> fecGrps);
+void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t>> fecGrps);
