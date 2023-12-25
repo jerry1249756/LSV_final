@@ -5,6 +5,10 @@ void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>>& fecGrps) {
   int Pi_Num = Abc_NtkPiNum(pNtk);
   int Sim_Num = 50000;
   cout << "total node" << Abc_NtkObjNum(pNtk) << endl;
+  for (int i = 0; i < DfsList->nSize; ++i) {
+    Abc_Obj_t* n = (Abc_Obj_t*) DfsList->pArray[i];
+    n->dTemp = 0;
+  }
   for (int i = 0; i < Sim_Num; ++i) {
     int* ptn = GenPattern(Pi_Num);
     SimPattern(pNtk, DfsList, ptn);
@@ -30,5 +34,24 @@ void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>>& fecGrps) {
       }
     }
     cout << "iter[" << i << "], fecGrps[" << fecGrps.size() << "], max[" << max_size << "], total[" << total_node << "]" << endl;
+  }
+  for (int i = 0; i < DfsList->nSize; ++i) {
+    Abc_Obj_t* n = (Abc_Obj_t*) DfsList->pArray[i];
+    n->dTemp /= Sim_Num*32;
+  }
+  for (int i = 0; i < fecGrps.size(); ++i) {
+    bool finish = false;
+    for (int j = 0; j < DfsList->nSize; ++j) {
+      for (int k = 0; k < fecGrps[i].size(); ++k) {
+          if (DfsList->pArray[j] == fecGrps[i][k]) {
+            Abc_Obj_t* temp = fecGrps[i][0];
+            fecGrps[i][0] = fecGrps[i][k];
+            fecGrps[i][k] = temp;
+            finish = true;
+            break;
+          }
+      }
+      if (finish) break;
+    }
   }
 }

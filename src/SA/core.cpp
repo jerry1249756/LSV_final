@@ -48,8 +48,6 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
         for(int i=0; i<iters; i++){
             bool real_do = false;
             INST action = get_action();
-            // INST action = INST(i%2 + 1);
-            // std::cout << inst_strings[int(action)] << "\n";
             int round = 1;
             int node_nums_orig = Abc_NtkNodeNum(pNew);
             while (!real_do && round < 20) { //tolerance threshold
@@ -136,17 +134,17 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
                     error_after = error_orig;
                 }
                 else {
-                    error_new = Simulation(pOrig, pNew, "er", 30000, vNodes_org);
+                    error_new = Simulation(pOrig, pNew, error_type, 20000, vNodes_org);
                     error_after = error_new;
                 }
                 int node_nums_after = Abc_NtkNodeNum(pNew);
-                double diff = 15000* cost_diff(error_orig, error_after, node_nums_orig, node_nums_after);
+                double diff = cost_diff(error_orig, error_after, node_nums_orig, node_nums_after, nodes_init);
                 // std::cout << "cost prob:" << exp(-diff / T)  << "\n"; 
-                mt19937 gen2(rd());
-                uniform_real_distribution<double> dist2(0,1);
+                mt19937 gen3(rd());
+                uniform_real_distribution<double> dist3(0,1);
 
-                if (diff < 0 || dist2(gen2) < exp(-diff / T)) {
-                    std::cout << "Replace! node_num (orig/after): " << node_nums_orig << " " << node_nums_after << " " << node_nums_orig-node_nums_after << "\n"; 
+                if (diff < 0 || dist3(gen3) < exp(-diff / T)) {
+                    // std::cout << "Replace! node_num (orig/after): " << node_nums_orig << " " << node_nums_after << "\n"; 
                     error_orig = error_after;
                     node_nums_orig = node_nums_after;
                 }
@@ -162,4 +160,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
         if(T>200 && r<=0.95) r += 0.01;
         else if(r>=0.85) r -= 0.01;
     }
+
+    
+
 }

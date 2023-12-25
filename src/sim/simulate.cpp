@@ -26,6 +26,7 @@ int* SimPattern(Abc_Ntk_t* pNtk, Vec_Ptr_t* vNodes, int* ptn) {
   Abc_NtkForEachPi(pNtk, pPi, ithPi) {
     // cout << Abc_ObjName(pPi) << ' ';
     pPi->iTemp = ptn[ithPi];
+    pPi->dTemp += CountOne(pPi->iTemp);
     // PrintBinary(pPi->iTemp);
   }
   Vec_PtrForEachEntry( Abc_Obj_t *, vNodes, pNode, ithNode) {

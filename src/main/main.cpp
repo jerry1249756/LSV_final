@@ -38,24 +38,6 @@ int main(int argc, char** argv) {
     // cout << "replace: " << Abc_ObjName(pNode2) << endl;
 
 
-    // std::srand(static_cast<unsigned int>(std::time(nullptr))); 
-    abcMgr = new AbcMgr;
-    abccmd("read ./testcases/mcnc.genlib");
-    // string lib = "./testcases/mcnc.genlib";
-
-    string map = "-m ./testcases/c7552.blif";
-    // string map = "./testcases/mem_ctrl.blif";
-
-    abcMgr->abcReadDesign(map);
-    abccmd("strash");
-    // Abc_Ntk_t* pNtk = abcMgr->get_Abc_Frame_t()->pNtkCur;
-    // abccmd("show");
-    // // Abc_Obj_t* pNode = Abc_NtkFindNode(pNtk, "n18");
-    // Abc_Obj_t* pNode = Abc_ObjFanin0(Abc_NtkPo(pNtk,0));
-    // Abc_Obj_t* pNode2 = ChoosePropagate(pNode);
-    // cout << "replace: " << Abc_ObjName(pNode2) << endl;
-  
-
     std::srand(static_cast<unsigned int>(std::time(nullptr))); 
     abcMgr = new AbcMgr;
     abccmd("read ./testcases/mcnc-aig.genlib");
