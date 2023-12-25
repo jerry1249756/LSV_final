@@ -174,3 +174,33 @@ void UpdateNtk_add_Or_node(Abc_Ntk_t* pNtk, Abc_Obj_t* pNodeOut, Abc_Obj_t* pNod
   Abc_ObjPatchFanin(pNodeOut, pNodeIn1, pAnd);
   Abc_NtkReassignIds(pNtk);
 }
+
+void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk) {
+  Abc_Aig_t* abc_aig = static_cast <Abc_Aig_t *> (pNtk->pManFunc);
+  vector<vector<Abc_Obj_t*>> fec_grps;
+  vector<Abc_Obj_t*> fec_grp;
+  Abc_Obj_t* pNode;
+  int i;
+  Vec_Ptr_t* vNodes;
+  Abc_NtkForEachObj(pNtk, pNode, i) {
+    assert(Abc_ObjType(pNode) != 0);
+    if (!Abc_ObjIsPo(pNode)) {
+      fec_grp.push_back(pNode);
+    }
+  }
+  fec_grps.push_back(fec_grp);
+  Fec(pNtk, fec_grps);
+  int times = 0;
+  for (i = 0; i < fec_grps.size(); i++) {
+    for (int j = 1; j < fec_grps[i].size(); j++) {
+      if(Abc_ObjType(fec_grps[i][0]) != 0){
+        Abc_AigReplace(abc_aig, fec_grps[i][j], fec_grps[i][0],0);
+        // int node_nums_after = Abc_NtkNodeNum(pNtk);
+          // cout << "after_node: " << node_nums_after << endl;
+        // cout << times++ << "\r";
+      }
+    }
+  }
+  cout << "\n";
+  Abc_NtkReassignIds(pNtk);
+}

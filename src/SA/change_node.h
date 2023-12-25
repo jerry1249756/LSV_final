@@ -8,6 +8,7 @@
 #include "base/abc/abc.h"
 #include "gvAbcNtk.h"
 #include "../prp/propagate.h"
+#include "../fec/fec.h"
 
 extern "C"{
   Abc_Obj_t * Abc_AigAndCreate( Abc_Aig_t * pMan, Abc_Obj_t * p0, Abc_Obj_t * p1 );
@@ -20,4 +21,5 @@ void UpdateNtk_const0_propagate(Abc_Ntk_t*);
 void UpdateNtk_add_And_node(Abc_Ntk_t*, Abc_Obj_t*, Abc_Obj_t*, Abc_Obj_t*);
 void UpdateNtk_add_Xor_node(Abc_Ntk_t*, Abc_Obj_t*, Abc_Obj_t*, Abc_Obj_t*);
 void UpdateNtk_add_Or_node(Abc_Ntk_t*, Abc_Obj_t*, Abc_Obj_t*, Abc_Obj_t*);
+void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk);
 #endif

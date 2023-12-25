@@ -3,12 +3,12 @@
 void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>>& fecGrps) {
   Vec_Ptr_t* DfsList = Abc_NtkDfsIter(pNtk, 0);
   int Pi_Num = Abc_NtkPiNum(pNtk);
-  int Sim_Num = 50000;
-  cout << "total node" << Abc_NtkObjNum(pNtk) << endl;
-  for (int i = 0; i < DfsList->nSize; ++i) {
-    Abc_Obj_t* n = (Abc_Obj_t*) DfsList->pArray[i];
-    n->dTemp = 0;
-  }
+  int Sim_Num = Abc_NtkNodeNum(pNtk) / 100;
+  // cout << "total node" << Abc_NtkNodeNum(pNtk) << endl;
+  // for (int i = 0; i < DfsList->nSize; ++i) {
+  //   Abc_Obj_t* n = (Abc_Obj_t*) DfsList->pArray[i];
+  //   n->dTemp = 0;
+  // }
   for (int i = 0; i < Sim_Num; ++i) {
     int* ptn = GenPattern(Pi_Num);
     SimPattern(pNtk, DfsList, ptn);
@@ -33,16 +33,32 @@ void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>>& fecGrps) {
         fecGrps.erase(fecGrps.begin()+j);
       }
     }
-    cout << "iter[" << i << "], fecGrps[" << fecGrps.size() << "], max[" << max_size << "], total[" << total_node << "]" << endl;
+    cout << "iter[" << i << "], fecGrps[" << fecGrps.size() << "], max[" << max_size << "], total[" << total_node << "]" << "\r";
   }
   for (int i = 0; i < DfsList->nSize; ++i) {
     Abc_Obj_t* n = (Abc_Obj_t*) DfsList->pArray[i];
     n->dTemp /= Sim_Num*32;
   }
   for (int i = 0; i < fecGrps.size(); ++i) {
+    bool hasPi = false;
+    for (int j = 0; j < fecGrps[i].size(); ++j) {
+      if (Abc_ObjIsPi(fecGrps[i][j])) {
+        hasPi = true;
+        Abc_Obj_t* temp = fecGrps[i][0];
+        fecGrps[i][0] = fecGrps[i][j];
+        fecGrps[i][j] = temp;
+        break;
+      }
+    }
+    for (int j = fecGrps[i].size()-1; j > 0; --j) {
+      if (Abc_ObjIsPi(fecGrps[i][j])) {
+        fecGrps[i].erase(fecGrps[i].begin()+j);
+      }
+    }
     bool finish = false;
-    for (int j = 0; j < DfsList->nSize; ++j) {
-      for (int k = 0; k < fecGrps[i].size(); ++k) {
+    if (!hasPi) {
+      for (int j = 0; j < DfsList->nSize; ++j) {
+        for (int k = 0; k < fecGrps[i].size(); ++k) {
           if (DfsList->pArray[j] == fecGrps[i][k]) {
             Abc_Obj_t* temp = fecGrps[i][0];
             fecGrps[i][0] = fecGrps[i][k];
@@ -50,8 +66,9 @@ void Fec(Abc_Ntk_t* pNtk, vector<vector<Abc_Obj_t*>>& fecGrps) {
             finish = true;
             break;
           }
+        }
+        if (finish) break;
       }
-      if (finish) break;
     }
   }
 }

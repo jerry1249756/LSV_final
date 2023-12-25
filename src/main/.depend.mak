@@ -22,8 +22,7 @@ main.o: main.cpp ../../include/gvAbcMgr.h ../../include/base/abc/abc.h \
  ../../include/sat/bsat/satSolver.h ../../include/sat/bsat/satVec.h \
  ../../include/sat/bsat/satClause.h ../../include/misc/util/utilDouble.h \
  ../../include/aig/ioa/ioa.h ../../include/gvAbcNtk.h \
- ../../include/gvAbcNtk.h ../est/exec.h ../../include/sat/cnf/cnf.h \
- ../../include/opt/dar/darInt.h ../../include/opt/dar/dar.h \
- ../sim/simulate.h ../../include/../src/util/rnGen.h ../SA/core.h \
- ../SA/./change_node.h ../SA/./../prp/propagate.h ../SA/../sim/simulate.h \
- ../prp/propagate.h ../fec/fec.h ../fec/./../sim/simulate.h
+ ../../include/gvAbcNtk.h ../SA/change_node.h ../SA/../prp/propagate.h \
+ ../SA/../fec/fec.h ../SA/../fec/./../sim/simulate.h \
+ ../../include/../src/util/rnGen.h ../SA/core.h ../SA/./change_node.h \
+ ../SA/../sim/simulate.h
