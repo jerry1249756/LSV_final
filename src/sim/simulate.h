@@ -15,5 +15,5 @@ int* GenPattern(int);
 int* SimPattern(Abc_Ntk_t*, Vec_Ptr_t* , int*);
 int CountOne(int);
 
-double Simulation(Abc_Ntk_t*, Abc_Ntk_t*, string, int, Vec_Ptr_t*);
+double Simulation(Abc_Ntk_t*, Abc_Ntk_t*, string, int, Vec_Ptr_t*, float er_threshold);
 #endif

@@ -29,5 +29,5 @@ static const std::string inst_strings[] = {"const1", "const0", "left_neg", "righ
  "orchestrate", "csweep", "dfraig", "balance", "dc2", "add_and_node", "add_Xor_node", "add_or_node", "fec" };
 
 INST get_action();
-void simulated_annealing(Abc_Ntk_t*, Abc_Ntk_t* );
+Abc_Ntk_t* simulated_annealing(Abc_Ntk_t*, Abc_Ntk_t*, string& error_type, float er_threshold, float& error_record);
 #endif

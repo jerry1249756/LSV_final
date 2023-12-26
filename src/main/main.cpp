@@ -24,10 +24,12 @@ int main(int argc, char** argv) {
 
     std::srand(static_cast<unsigned int>(std::time(nullptr))); 
     abcMgr = new AbcMgr;
-    abccmd("read ./testcases/mcnc.genlib");
+    abccmd("read ./testcases/mcnc-aig.genlib");
     // string lib = "./testcases/mcnc.genlib";
     // string map = "-m ./testcases/c7552.blif";
-    string map = "./testcases/voter.blif";
+    string map = argv[1];
+    string error_type = argv[2];
+    float er_threshold = stof(argv[3]);
 
     // abcMgr->abcReadDesign(lib);
     abcMgr->abcReadDesign(map);
@@ -41,10 +43,13 @@ int main(int argc, char** argv) {
     int node_nums_orig = Abc_NtkNodeNum(pNtk_orig);
     int node_nums_after = Abc_NtkNodeNum(pNtk_cur);
     // std::cout << "node_num (orig/after): " << node_nums_orig << " " << node_nums_after << "\n"; 
-    
-    simulated_annealing(pNtk_orig, pNtk_cur);
+    float error_record;
+    Abc_Ntk_t* pNtk_best = simulated_annealing(pNtk_orig, pNtk_cur, error_type, er_threshold, error_record);
+    Abc_FrameReplaceCurrentNetwork(abcMgr->get_Abc_Frame_t(), pNtk_best);
+    abccmd("map");
+
     // std::cout << "node_num (orig/after): " << node_nums_orig << " " << node_nums_after << "\n"; 
-    
+    cout << "best_area: " << Abc_NtkGetMappedArea(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t())) << " error: " << float(error_record) *100 << "%" << endl;
     return 0;
 }
 

@@ -21,29 +21,37 @@ double area_func(int node_curr, int node_orig){
     return 0.5*pow((node_curr-node_orig) / node_orig, 4);
 }
 
-double cost_diff(double rate_orig, double rate_after, int nums_orig, int nums_after, int nums_init) {
+double cost_diff(double rate_orig, double rate_after, int nums_orig, int nums_after, int nums_init, float er_threshold) {
     //cost function z = 0.1x^2 + ITE(y<5, y , 3y-10), x: "total" area reduction rate, y: error rate
-    float er_threshold = 5;
-    double error_cost = error_func(rate_after, er_threshold) - error_func(rate_orig, er_threshold);
+    double error_cost = error_func(rate_after,100*er_threshold) - error_func(rate_orig, 100*er_threshold);
     double area_cost = area_func(nums_after, nums_init) - area_func(nums_orig, nums_init);
     return 20000*(error_cost + area_cost);
 }
 
-void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
+Abc_Ntk_t* simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew, string& error_type, float er_threshold, float& error_record){
     // parameters
+    Abc_Ntk_t* pRecord;
+    abccmd("map");
+    int min_area = Abc_NtkGetMappedArea(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));;
     float T = 500;
     float T_low = 0.5;
     float r = 0.85;
     int iters = 40;
     double error_orig = 0;
-    std::string error_type = "nmed";
     Vec_Ptr_t* vNodes_org = Abc_NtkDfsIter(pOrig, 0);
     int nodes_init = Abc_NtkNodeNum(pNew);
     while(T>T_low){
         abccmd("map");
         double area = Abc_NtkGetMappedArea(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));
         // std::cout << "area:" << area << ", current error:"  << error_orig << "\n"; 
-        std::cout <<  "area: " << area << " error: " <<  error_orig << "\n";
+        std::cout << "T: " << T << " area: " << area << " error: " <<  error_orig << "\n";
+        if (error_orig < 0.01) {
+            if (area < min_area) {
+                min_area = area;
+                error_record = error_orig;
+                pRecord = Abc_NtkDup(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));
+            }
+        }
         abccmd("strash");
         pNew = Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t());
         for(int i=0; i<iters; i++){
@@ -120,7 +128,7 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
                 bool skip = false;
                     
                 if (!(action == INST::ORCHESTRATE || action == INST::CSWEEP || action == INST::DFRAIG || action == INST::BALANCE || action == INST::DC2)){
-                    fast_error = Simulation(pOrig, pNew, error_type, 500, vNodes_org);
+                    fast_error = Simulation(pOrig, pNew, error_type, 500, vNodes_org, er_threshold);
                     if (fast_error - error_orig > 0.0005 * round) skip = true;
                 }
                 if (skip) {
@@ -138,11 +146,11 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
                     error_after = error_orig;
                 }
                 else {
-                    error_new = Simulation(pOrig, pNew, error_type, 20000, vNodes_org);
+                    error_new = Simulation(pOrig, pNew, error_type, 20000, vNodes_org, er_threshold);
                     error_after = error_new;
                 }
                 int node_nums_after = Abc_NtkNodeNum(pNew);
-                double diff = cost_diff(error_orig, error_after, node_nums_orig, node_nums_after, nodes_init);
+                double diff = cost_diff(error_orig, error_after, node_nums_orig, node_nums_after, nodes_init, er_threshold);
                 // std::cout << "cost prob:" << exp(-diff / T)  << "\n"; 
                 mt19937 gen3(rd());
                 uniform_real_distribution<double> dist3(0,1);
@@ -164,7 +172,5 @@ void simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew){
         if(T>200 && r<=0.95) r += 0.01;
         else if(r>=0.85) r -= 0.01;
     }
-
-    
-
+    return pRecord;
 }

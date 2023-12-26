@@ -63,7 +63,7 @@ int CountOne(int in) {
   return one;
 }
 
-double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type, int Sim_Num, Vec_Ptr_t* vNodes_org) {
+double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type, int Sim_Num, Vec_Ptr_t* vNodes_org, float er_threshold) {
   // cout << "start simulation\nerror type = " << err_type << endl;
   Vec_Ptr_t* vNodes_aft = Abc_NtkDfsIter(pAftNtk, 0);
   // check if two Network have same # input, output
@@ -105,7 +105,7 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type, int S
       cout << "wrong error type!" << endl;
     }
     Err_rate = (double)total_Err / (double)total_Ptn;
-    if (Err_rate > 0.051 && i >= 1000) {
+    if (Err_rate > er_threshold && i >= 1000) {
       Err_rate = 1;
       break;
     }
