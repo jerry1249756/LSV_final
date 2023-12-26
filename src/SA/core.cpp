@@ -11,10 +11,10 @@ INST get_action(){
     return  static_cast<INST>(result);
 }
 
-double error_func(double rate) {
+double error_func(double rate, float er_threshold) {
     // return 2*error_rate;
     // smoothened piecewise linear function with slope from 1 -> 5
-    return 2*(log(exp(-2*rate+10)+1)+2*rate-10)+rate;
+    return 2*(log(exp(-2*rate+2*er_threshold)+1)+2*rate-2*er_threshold)+rate;
 }
 
 double area_func(int node_curr, int node_orig){
@@ -23,7 +23,8 @@ double area_func(int node_curr, int node_orig){
 
 double cost_diff(double rate_orig, double rate_after, int nums_orig, int nums_after, int nums_init) {
     //cost function z = 0.1x^2 + ITE(y<5, y , 3y-10), x: "total" area reduction rate, y: error rate
-    double error_cost = error_func(rate_after) - error_func(rate_orig);
+    float er_threshold = 5;
+    double error_cost = error_func(rate_after, er_threshold) - error_func(rate_orig, er_threshold);
     double area_cost = area_func(nums_after, nums_init) - area_func(nums_orig, nums_init);
     return 20000*(error_cost + area_cost);
 }
