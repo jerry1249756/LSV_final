@@ -189,7 +189,7 @@ void UpdateNtk_using_FEC(Abc_Ntk_t* pNtk) {
   int times = 0;
   for (i = 0; i < fec_grps.size(); i++) {
     for (int j = 1; j < fec_grps[i].size(); j++) {
-      if(Abc_ObjType(fec_grps[i][0]) != 0){
+      if(Abc_ObjType(fec_grps[i][0]) != 0 && Abc_ObjIsNode(fec_grps[i][j])){
         Abc_AigReplace(abc_aig, fec_grps[i][j], fec_grps[i][0],0);
         // int node_nums_after = Abc_NtkNodeNum(pNtk);
           // cout << "after_node: " << node_nums_after << endl;
