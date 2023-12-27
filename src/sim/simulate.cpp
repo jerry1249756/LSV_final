@@ -46,6 +46,7 @@ int* SimPattern(Abc_Ntk_t* pNtk, Vec_Ptr_t* vNodes, int* ptn) {
   Abc_NtkForEachPo(pNtk, pPo, ithPo) {
     Abc_Obj_t* pRoot = Abc_ObjFanin0(pPo);
     int ans = (pRoot->Id == 0)? -1 : pRoot->iTemp;
+    if (Abc_AigNodeIsConst(pRoot)) ans = ~(0x00);
     if (!Abc_ObjFaninC0(pPo)) pPo->iTemp = ans;
     else                      pPo->iTemp = ~ans;
     // cout << Abc_ObjName(pPo) << ' ';
