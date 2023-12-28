@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 
     std::srand(static_cast<unsigned int>(std::time(nullptr))); 
     abcMgr = new AbcMgr;
-    abccmd("read ./testcases/mcnc-aig.genlib");
+    abccmd("read ./testcases/mcnc.genlib");
     // string lib = "./testcases/mcnc.genlib";
     // string map = "-m ./testcases/c7552.blif";
     string map = argv[1];

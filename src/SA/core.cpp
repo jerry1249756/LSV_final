@@ -40,11 +40,16 @@ Abc_Ntk_t* simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew, string& error_
     double error_orig = 0;
     Vec_Ptr_t* vNodes_org = Abc_NtkDfsIter(pOrig, 0);
     int nodes_init = Abc_NtkNodeNum(pNew);
+    vector<int> vec_area;
+    vector<float> vec_error_rate;
     while(T>T_low){
         abccmd("map");
         double area = Abc_NtkGetMappedArea(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));
-        // std::cout << "area:" << area << ", current error:"  << error_orig << "\n"; 
-        std::cout << "T: " << T << " area: " << area << " error: " <<  error_orig << "\n";
+        // std::cout << "(" << area << ", " <<  error_orig << "),\n";
+        std::cout << "#" ;
+        vec_area.push_back(area);
+        vec_error_rate.push_back(error_orig);  
+        // std::cout << "T: " << T << " area: " << area << " error: " <<  error_orig << "\n";
         if (error_orig < 0.01) {
             if (area < min_area) {
                 min_area = area;
@@ -59,6 +64,21 @@ Abc_Ntk_t* simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew, string& error_
             INST action = get_action();
             int round = 1;
             int node_nums_orig = Abc_NtkNodeNum(pNew);
+            // if(iters%20==0){
+            //     abccmd("map");
+            //     double area = Abc_NtkGetMappedArea(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));
+            //     // std::cout << "area:" << area << ", current error:"  << error_orig << "\n"; 
+            //     std::cout << "(" << area << ", " <<  error_orig << "),\n";
+            //     if (error_orig < 0.01) {
+            //         if (area < min_area) {
+            //             min_area = area;
+            //             error_record = error_orig;
+            //             pRecord = Abc_NtkDup(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));
+            //         }
+            //     }
+            //     abccmd("strash");
+            //     pNew = Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t());
+            // }
             while (!real_do && round < 20) { //tolerance threshold
                 // if (node_nums_orig < 20) return;
                 if(abcMgr->get_Abc_Frame_t()->pNtkBackup){
@@ -129,7 +149,7 @@ Abc_Ntk_t* simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew, string& error_
                     
                 if (!(action == INST::ORCHESTRATE || action == INST::CSWEEP || action == INST::DFRAIG || action == INST::BALANCE || action == INST::DC2)){
                     fast_error = Simulation(pOrig, pNew, error_type, 500, vNodes_org, er_threshold);
-                    if (fast_error - error_orig > 0.0005 * round) skip = true;
+                    if (fast_error - error_orig > 0.0003 * round) skip = true;
                 }
                 if (skip) {
                     // cout << "skip " << endl;
@@ -172,5 +192,14 @@ Abc_Ntk_t* simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew, string& error_
         if(T>200 && r<=0.95) r += 0.01;
         else if(r>=0.85) r -= 0.01;
     }
+
+    for(int i=0; i<vec_area.size();i++){
+        std::cout << vec_area[i] << ", " ;
+    }
+    std::cout << "\n";
+    for(int i=0; i<vec_area.size();i++){
+        std::cout << vec_error_rate[i] << ", " ;
+    }
+
     return pRecord;
 }
