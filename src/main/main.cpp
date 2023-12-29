@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sys/stat.h>
 #include "gvAbcMgr.h"
 #include "base/abc/abc.h"
 #include "gvAbcNtk.h"
@@ -24,12 +25,15 @@ int main(int argc, char** argv) {
 
     std::srand(static_cast<unsigned int>(std::time(nullptr))); 
     abcMgr = new AbcMgr;
-    abccmd("read ./testcases/mcnc.genlib");
+    string lib = "read ";
+    lib += argv[1];
+    
+    abccmd(lib);
     // string lib = "./testcases/mcnc.genlib";
     // string map = "-m ./testcases/c7552.blif";
-    string map = argv[1];
-    string error_type = argv[2];
-    float er_threshold = stof(argv[3]);
+    string map = argv[2];
+    string error_type = argv[3];
+    float er_threshold = stof(argv[4]);
 
     // abcMgr->abcReadDesign(lib);
     abcMgr->abcReadDesign(map);
@@ -46,6 +50,10 @@ int main(int argc, char** argv) {
     float error_record;
     Abc_Ntk_t* pNtk_best = simulated_annealing(pNtk_orig, pNtk_cur, error_type, er_threshold, error_record);
     Abc_FrameReplaceCurrentNetwork(abcMgr->get_Abc_Frame_t(), pNtk_best);
+    abccmd("strash");
+    mkdir("./result",0777);
+    abccmd("write_aiger ./result/result.aig");
+    abccmd("write_cnf ./result/result.cnf");
     abccmd("map");
 
     // std::cout << "node_num (orig/after): " << node_nums_orig << " " << node_nums_after << "\n"; 

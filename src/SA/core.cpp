@@ -45,11 +45,9 @@ Abc_Ntk_t* simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew, string& error_
     while(T>T_low){
         abccmd("map");
         double area = Abc_NtkGetMappedArea(Abc_FrameReadNtk(abcMgr->get_Abc_Frame_t()));
-        // std::cout << "(" << area << ", " <<  error_orig << "),\n";
-        std::cout << "#" ;
         vec_area.push_back(area);
         vec_error_rate.push_back(error_orig);  
-        // std::cout << "T: " << T << " area: " << area << " error: " <<  error_orig << "\n";
+        std::cout << "area: " << setw(6) << area << " error: " <<  error_orig << "\n";
         if (error_orig < 0.01) {
             if (area < min_area) {
                 min_area = area;
@@ -192,14 +190,5 @@ Abc_Ntk_t* simulated_annealing(Abc_Ntk_t* pOrig, Abc_Ntk_t* pNew, string& error_
         if(T>200 && r<=0.95) r += 0.01;
         else if(r>=0.85) r -= 0.01;
     }
-
-    for(int i=0; i<vec_area.size();i++){
-        std::cout << vec_area[i] << ", " ;
-    }
-    std::cout << "\n";
-    for(int i=0; i<vec_area.size();i++){
-        std::cout << vec_error_rate[i] << ", " ;
-    }
-
     return pRecord;
 }
