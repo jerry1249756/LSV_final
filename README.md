@@ -24,7 +24,7 @@ Use the command to execute our program. We support two kinds of error type, `er`
 ./bin/approximate LIB_FILE INPUT_FILE ERROR_TYPE ERROR_RATE
 ```
 
-We provide the cloned EPFL benchmarks in `benckmarks/`, which can be found in [link](https://github.com/lsils/benchmarks).
+We provide the cloned EPFL benchmarks in `benckmark/`, which can be found in [link](https://github.com/lsils/benchmarks).
 
 There are two kinds of library files in folder `library`, `mcnc.genlib` and `mcnc-aig.genlib`.
 
