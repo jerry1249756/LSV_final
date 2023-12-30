@@ -2,7 +2,8 @@
 
 mkdir lib
 mkdir include
-mkdir build
+mkdir bin
+mkdir testcases
 # go to engine/
 cd engine/
 

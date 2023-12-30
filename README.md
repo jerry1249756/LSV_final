@@ -1,40 +1,34 @@
 # LSV_final
 
+## Approximate Logic Synthesis by Multi-Objective Simulated Annealing
+
+We proposed a method for Approximate Logic Synthesis (ALS) by applying the local approximate change (LACs) with a Multi-Objective Simulated Annealing (MOSA) engine. Our method includes LACs which can reduce the error rate with probability. With an alternation between LACs and exact circuit optimizations, we can explore better solutions compared to the existing ALS tool ALSRAC on EPFL benchmarks.
+
 ## Installation
 
+Please execute this code on Linux/ WSL platforms.
 
-### File Hierachy
+1. Clone this directory.
+2. Run the script to install and compile the required packages. It will gernerate a program named `approximate` in `bin/` directory.
 
-1. Clone and build this directory.
-2. Download and build the following tools _outside_ this directory:
-   - Synthesis tool `ABC`, which can be found in https://github.com/berkeley-abc/abc.
+```
+ ./SETUP.sh
+ make
+```
 
+3. Put the circuit under ALS into the `testcases/` directory. The EPFL benchmarks can be found in [link](https://github.com/lsils/benchmarks).
 
-## Setup Environment
-use script SETUP.sh in this directory to setup environment (the `abc` tool)
+## Usage
 
-    ./SETUP.sh
+Use the command to execute our program. We support two kinds of error type, `er` and `hd`.
 
+```
+./bin/approximate LIB_FILE INPUT_FILE ERROR_TYPE ERROR_RATE
+```
 
-<!-- ## How to use ABC in main.cpp
-1. the pNtk in abc is abcMgr->get_Abc_Frame_t()->pNtkCur
-2. then you can use pNtk and function in abc to do something -->
+There are two kinds of library file in folder `library`, `mcnc.genlib` and `mcnc-aig.genlib`.
 
-## Build Approximate
-generate a executable program
+For `arithmetic` benchmarks, you need to use `mcnc.genlib` to map the circuit.
+For `random_control` benchmarks, you can use both library to map the circuit.
 
-    make
-It will gernerate a program named `approximate` in `bin`  
-the benchmarks are in `BLIF` format in the folder `benchmark`  
-there are two kinds of circuit, `arithmetic` and `random_control`  
-there are two kinds of library file in folder `library`, `mcnc.genlib` and `mcnc-aig.genlib`  
-for `arithmetic`, you need to use `mcnc.genlib` to map the circuit  
-for `random_control`, you can use both library to map the circuit
-
-use the command below to execute our program.
-we support two error type, `er` and `nmed`.
-
- `./bin/approximate LIB_FILE INPUT_FILE ERROR_TYPE ERROR_RATE`
-
- in this case, the approximate circuit is saved into `result/`.
-
+The ALS result will be saved into `result/`.
