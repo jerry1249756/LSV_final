@@ -95,7 +95,7 @@ double Simulation(Abc_Ntk_t* pOrgNtk, Abc_Ntk_t* pAftNtk, string err_type, int S
       total_Ptn += 32;
       total_Err += CountOne(err);
     }
-    else if (err_type == "nmed" || err_type == "NMED") {
+    else if (err_type == "hd" || err_type == "HD") {
       for (int j = 0; j < Po_Num; ++j) {
         Xor = Org_res[j] ^ Aft_res[j];
         total_Ptn += 32;
