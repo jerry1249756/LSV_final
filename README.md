@@ -16,8 +16,6 @@ Please execute this code on Linux/ WSL platforms.
  make
 ```
 
-3. Put the circuit under ALS into the `testcases/` directory. The EPFL benchmarks can be found in [link](https://github.com/lsils/benchmarks).
-
 ## Usage
 
 Use the command to execute our program. We support two kinds of error type, `er` and `hd`.
@@ -26,9 +24,11 @@ Use the command to execute our program. We support two kinds of error type, `er`
 ./bin/approximate LIB_FILE INPUT_FILE ERROR_TYPE ERROR_RATE
 ```
 
-There are two kinds of library file in folder `library`, `mcnc.genlib` and `mcnc-aig.genlib`.
+We provide the cloned EPFL benchmarks in `benckmarks/`, which can be found in [link](https://github.com/lsils/benchmarks).
+
+There are two kinds of library files in folder `library`, `mcnc.genlib` and `mcnc-aig.genlib`.
 
 For `arithmetic` benchmarks, you need to use `mcnc.genlib` to map the circuit.
-For `random_control` benchmarks, you can use both library to map the circuit.
+For `random_control` benchmarks, you can use both libraries to map the circuit.
 
 The ALS result will be saved into `result/`.
